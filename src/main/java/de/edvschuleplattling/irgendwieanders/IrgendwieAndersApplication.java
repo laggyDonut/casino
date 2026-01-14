@@ -10,4 +10,6 @@ public class IrgendwieAndersApplication {
 		SpringApplication.run(IrgendwieAndersApplication.class, args);
 	}
 
+	//Test
+
 }
