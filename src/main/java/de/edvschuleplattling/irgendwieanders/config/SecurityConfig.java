@@ -12,6 +12,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
+                /*
+                .requestMatchers("/", "/index.html", "/api/hello").permitAll()
+                .anyRequest().authenticated()
+                */
+
                 .anyRequest().permitAll()
             );
         return http.build();
