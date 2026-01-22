@@ -7,6 +7,4 @@ public enum AuditActionType {
         REVOKE_ROLE,
         EDIT_USER,
         DELETE_USER
-
-
 }
