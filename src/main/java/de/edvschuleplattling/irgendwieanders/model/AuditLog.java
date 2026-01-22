@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // Pflicht für JPA
 @AllArgsConstructor
 @Builder
+@ToString
 public class AuditLog {
 
     // === Primärschlüssel ===============================================
