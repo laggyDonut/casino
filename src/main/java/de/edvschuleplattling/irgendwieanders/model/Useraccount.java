@@ -23,7 +23,7 @@ public class Useraccount implements Serializable {
 
     private Timestamp email_verified_at;
 
-    // Passwort (BCrypt Hash)
+    // Passwort
     @Column(nullable = false, length = 255)
     private String password_hash;
 
@@ -55,6 +55,9 @@ public class Useraccount implements Serializable {
     @Column(nullable = false)
     private Timestamp updated_at;
 
+    @Column(nullable = false)
+    private Role role;
+
     // Konstruktor für neue User
     public Useraccount(String email, String password_hash) {
         this.email = email;
@@ -64,6 +67,7 @@ public class Useraccount implements Serializable {
         this.failed_logins = 0;
         this.created_at = new Timestamp(System.currentTimeMillis());
         this.updated_at = this.created_at;
+        this.role = de.edvschuleplattling.irgendwieanders.model.Role.GAMER;
     }
 
     @Override
