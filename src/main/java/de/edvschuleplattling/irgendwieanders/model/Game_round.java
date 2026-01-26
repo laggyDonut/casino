@@ -33,7 +33,7 @@ public class Game_round implements Serializable {
     private String status;
 
     @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal bet_amount;
+    private BigDecimal bet_amount; //request bitte variable auf start amount ändern und EndAmount machen
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal win_amount;
