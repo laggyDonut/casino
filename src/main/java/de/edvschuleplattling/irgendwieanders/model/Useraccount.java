@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -21,11 +22,11 @@ public class Useraccount implements Serializable {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    private Timestamp email_verified_at;
+    private LocalDateTime email_verified_at;
 
     // Passwort
     @Column(nullable = false, length = 255)
-    private String password_hash;
+    private transient String password_hash;
 
     // Status
     @Column(nullable = false)
@@ -34,7 +35,7 @@ public class Useraccount implements Serializable {
     @Column(nullable = false)
     private boolean is_locked;
 
-    private Timestamp locked_at;
+    private LocalDateTime locked_at;
 
     @Column(length = 200)
     private String lock_reason;
@@ -43,20 +44,26 @@ public class Useraccount implements Serializable {
     @Column(nullable = false)
     private int failed_logins;
 
-    private Timestamp last_login_at;
+    @Column(nullable = true)
+    private LocalDateTime last_login_at;
 
     // Soft Delete
-    private Timestamp deleted_at;
+    @Column(nullable = false)
+    private LocalDateTime deleted_at;
 
     // Meta
     @Column(nullable = false)
-    private Timestamp created_at;
+    private LocalDateTime created_at;
 
     @Column(nullable = false)
-    private Timestamp updated_at;
+    private LocalDateTime updated_at;
 
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    @OneToOne(mappedBy = "id")
+    private Wallet wallet;
 
     // Konstruktor für neue User
     public Useraccount(String email, String password_hash) {
@@ -65,7 +72,7 @@ public class Useraccount implements Serializable {
         this.is_enabled = true;
         this.is_locked = false;
         this.failed_logins = 0;
-        this.created_at = new Timestamp(System.currentTimeMillis());
+        this.created_at = LocalDateTime.now();
         this.updated_at = this.created_at;
         this.role = de.edvschuleplattling.irgendwieanders.model.Role.GAMER;
     }
