@@ -5,21 +5,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import lombok.*;
 import java.io.Serializable;
+
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 
 public class Accountrole {
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.io.Serializable;
-
-    @Entity
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    @EqualsAndHashCode(of = "id")
 
 
         // Primary Key
@@ -57,5 +53,3 @@ import java.io.Serializable;
             return id;
         }
     }
-
-}
