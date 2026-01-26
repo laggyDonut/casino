@@ -5,8 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.*;
-import java.io.Serializable;
+
 
 @Entity
 @NoArgsConstructor
@@ -43,13 +42,5 @@ public class Accountrole {
                     "id=" + id +
                     ", name='" + name + '\'' +
                     '}';
-        }
-
-        public void setId(Short id) {
-            this.id = id;
-        }
-
-        public Short getId() {
-            return id;
         }
     }
