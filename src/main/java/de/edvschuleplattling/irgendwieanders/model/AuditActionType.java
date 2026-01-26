@@ -1,10 +1,10 @@
 package de.edvschuleplattling.irgendwieanders.model;
 
 public enum AuditActionType {
-        LOCK_USER,
-        UNLOCK_USER,
-        GRANT_ROLE,
-        REVOKE_ROLE,
-        EDIT_USER,
-        DELETE_USER
+        LOCK_USER,      // Spieler sperren
+        UNLOCK_USER,    // Spieler entsperren
+        GRANT_ADMIN,    // Zum Admin befördern
+        REVOKE_ADMIN,   // Admin-Rechte entziehen
+        VIEW_DETAILS,    // Hat Detaildaten angesehen (Datenschutz!)
+        MAKE_NOTE       // Hat Notiz zu Spieler erstellt
 }
