@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class AuditLog {
 
     @Id
@@ -41,6 +39,13 @@ public class AuditLog {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public AuditLog(Useraccount actor, Useraccount target, AuditActionType actionType, String actionDetails) {
+        this.actor = actor;
+        this.target = target;
+        this.actionType = actionType;
+        this.actionDetails = actionDetails;
     }
 
     @Override

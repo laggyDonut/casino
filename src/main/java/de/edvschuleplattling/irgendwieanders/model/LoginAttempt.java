@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@NoArgsConstructor
 public class LoginAttempt implements Serializable {
 
     @Id
@@ -35,4 +35,11 @@ public class LoginAttempt implements Serializable {
 
     @PrePersist
     protected void onCreate() { this.attemptedAt = LocalDateTime.now(); }
+
+    public LoginAttempt(Useraccount user, String emailInput, boolean success, String failReason) {
+        this.user = user;
+        this.emailInput = emailInput;
+        this.success = success;
+        this.failReason = failReason;
+    }
 }
