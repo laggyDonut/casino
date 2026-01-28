@@ -37,33 +37,25 @@ public class Useraccount implements Serializable {
 
     private LocalDateTime locked_at;
 
-    @Column(length = 200)
-    private String lock_reason;
-
-    // Telemetrie
-    @Column(nullable = false)
-    private int failed_logins;
-
-    @Column(nullable = true)
-    private LocalDateTime last_login_at;
-
-    // Soft Delete
+    // Wenn Account gelöscht wird
     @Column(nullable = false)
     private LocalDateTime deleted_at;
 
-    // Meta
+    // Wenn Account erstellt wird
     @Column(nullable = false)
     private LocalDateTime created_at;
 
+    // Wenn Account geupdatet wird
     @Column(nullable = false)
     private LocalDateTime updated_at;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
-    @OneToOne(mappedBy = "id")
-    private Wallet wallet;
+    //@Column(nullable = false)
+    //@OneToOne(mappedBy = "id")
+    //private Wallet wallet;
 
     // Konstruktor für neue User
     public Useraccount(String email, String password_hash) {
@@ -71,7 +63,6 @@ public class Useraccount implements Serializable {
         this.password_hash = password_hash;
         this.is_enabled = true;
         this.is_locked = false;
-        this.failed_logins = 0;
         this.created_at = LocalDateTime.now();
         this.updated_at = this.created_at;
         this.role = de.edvschuleplattling.irgendwieanders.model.Role.GAMER;
