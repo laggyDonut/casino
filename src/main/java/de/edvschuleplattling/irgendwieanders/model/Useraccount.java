@@ -51,6 +51,9 @@ public class Useraccount implements Serializable {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private LocalDateTime password_reset_date;
+
     //@Column(nullable = false)
     //@OneToOne(mappedBy = "id")
     //private Wallet wallet;
