@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@NoArgsConstructor
 public class AdminNote implements Serializable {
 
     @Id
@@ -24,10 +24,15 @@ public class AdminNote implements Serializable {
     @Column(nullable = false)
     private String content;
 
-    private boolean isResolved; // Z.B. "Erledigt"
-
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() { this.createdAt = LocalDateTime.now(); }
+
+    public AdminNote(Useraccount user, Useraccount author, String content) {
+        this.user = user;
+        this.author = author;
+        this.content = content;
+    }
 }

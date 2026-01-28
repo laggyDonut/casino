@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class AuditLog {
 
     @Id
@@ -29,7 +27,7 @@ public class AuditLog {
     private AuditActionType actionType;
 
     @Column(length = 70)
-    private String actionDetails; // Z.B. "Grund: Betrugsverdacht"
+    private String actionDetails; // z.B. "Grund: Betrugsverdacht"
 
     // Optional: IP-Adresse zur Sicherheit
     //@Column(name = "ip_address", length = 45)
@@ -41,5 +39,24 @@ public class AuditLog {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public AuditLog(Useraccount actor, Useraccount target, AuditActionType actionType, String actionDetails) {
+        this.actor = actor;
+        this.target = target;
+        this.actionType = actionType;
+        this.actionDetails = actionDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "AuditLog{" +
+                "id=" + id +
+                ", actor=" + actor +
+                ", target=" + target +
+                ", actionType=" + actionType +
+                ", actionDetails='" + actionDetails + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }
