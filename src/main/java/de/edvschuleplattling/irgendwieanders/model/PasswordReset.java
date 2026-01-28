@@ -11,6 +11,7 @@ public class PasswordReset {
     private Long id;
 
     @Column(nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
     private Useraccount useraccount;
 
     @Column(nullable = false)
