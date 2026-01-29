@@ -17,15 +17,16 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 
 
-public class Transaction {
+public class Wallet {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private Useraccount useraccount;
-    private Game game;
-    private TransactionType type;  //muss später noch eine ENUM werden
-    private int tokenAmount; //Tokens
-    private double cashAmount; //Echtgeld
-    private TransactionStatus status; //muss später ENUM werden
+    private double balance;
+    private double bonusBalance;
+    private int currency;  //muss noch enum werden
+    private double depositLimitMonthly;
+    private double depositLimitMonthlyCounter;
 }
