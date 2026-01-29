@@ -14,7 +14,7 @@ import java.util.List;
 public class PokerPlayerConnection {
 
     // --- IDENTITÄT ---
-    private Userprofiles user;
+    private Userprofile user;
 
     // User Chips on Table
     private long tableChips;  // Die Chips, die er aktuell auf dem Tisch hat (können sich ändern)
@@ -27,7 +27,7 @@ public class PokerPlayerConnection {
     private boolean hasFolded;        // Hat er aufgegeben?
     private boolean isAllIn;          // Hat er alles gesetzt?
 
-    public PokerPlayerConnection(Userprofiles user, long initialStack) {
+    public PokerPlayerConnection(Userprofile user, long initialStack) {
         this.user = user;
         this.stack = initialStack;
         this.tableChips = initialStack; // Assuming table chips = stack initially

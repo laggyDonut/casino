@@ -1,10 +1,7 @@
 package de.edvschuleplattling.irgendwieanders.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +20,18 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @OneToOne(optional = false)
     private Useraccount useraccount;
+
+    @Column(nullable = false)
     private double balance;
+
+    @Column(nullable = false)
     private double bonusBalance;
-    private int currency;  //muss noch enum werden
+
+    @Column(nullable = true)
     private double depositLimitMonthly;
+
+    @Column(nullable = true)
     private double depositLimitMonthlyCounter;
 }
