@@ -3,7 +3,6 @@ package de.edvschuleplattling.irgendwieanders.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,7 +31,7 @@ public class Useraccount implements Serializable {
 
     // ist Account gesperrt
     @Column(nullable = false)
-    private boolean isLocked;
+    private boolean isLocked = false;
 
     // Wann wurde Account gesperrt
     @Column(nullable = true)
@@ -60,8 +59,8 @@ public class Useraccount implements Serializable {
     private LocalDateTime passwordResetDate;
 
     // Loginversuche des Users
-    @Column
-    private int loginAttempts;
+    @Column(nullable = false)
+    private int loginAttempts = 0;
 
     // Geld vom Spieler
     @OneToOne
@@ -78,7 +77,12 @@ public class Useraccount implements Serializable {
         this.isLocked = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
-        this.role = de.edvschuleplattling.irgendwieanders.model.Role.GAMER;
+        this.role = Role.GAMER;
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     @Override
@@ -86,7 +90,7 @@ public class Useraccount implements Serializable {
         return "Useraccount{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", is_locked=" + isLocked +
+                ", isLocked=" + isLocked +
                 '}';
     }
 }
