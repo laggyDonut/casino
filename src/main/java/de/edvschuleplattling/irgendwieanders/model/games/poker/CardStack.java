@@ -1,4 +1,4 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.games.poker;
 
 import de.edvschuleplattling.irgendwieanders.Exceptions.CardStackStateException;
 

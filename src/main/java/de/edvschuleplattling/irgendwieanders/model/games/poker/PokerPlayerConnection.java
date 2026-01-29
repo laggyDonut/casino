@@ -1,5 +1,6 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.games.poker;
 
+import de.edvschuleplattling.irgendwieanders.model.Userprofiles;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,19 +32,5 @@ public class PokerPlayerConnection {
         this.stack = initialStack;
         this.tableChips = initialStack; // Assuming table chips = stack initially
         this.holeCards = new ArrayList<>();
-    }
-
-    public void addCard(Card card) {
-        if (holeCards == null) {
-            holeCards = new ArrayList<>();
-        }
-        holeCards.add(card);
-    }
-
-    public void resetForNewRound() {
-        this.holeCards = new ArrayList<>();
-        this.currentRoundBet = 0;
-        this.hasFolded = false;
-        this.isAllIn = false;
     }
 }
