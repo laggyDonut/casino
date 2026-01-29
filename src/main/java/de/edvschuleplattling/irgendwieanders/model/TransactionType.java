@@ -2,6 +2,6 @@ package de.edvschuleplattling.irgendwieanders.model;
 
 public enum TransactionType {
 
-    WINN, LOSS, BREAK_EVEN, DEPOSIT, WITHDRAW
+    DEPOSIT, PAY_OUT
 
 }
