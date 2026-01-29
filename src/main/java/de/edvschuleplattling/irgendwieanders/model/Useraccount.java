@@ -59,6 +59,10 @@ public class Useraccount implements Serializable {
     @Column(nullable = true)
     private LocalDateTime passwordResetDate;
 
+    // Loginversuche des Users
+    @Column
+    private int loginAttempts;
+
     // Geld vom Spieler
     @OneToOne
     private Wallet wallet;
