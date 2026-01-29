@@ -1,4 +1,4 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.games.poker;
 
 public enum Rank {
     TWO,
