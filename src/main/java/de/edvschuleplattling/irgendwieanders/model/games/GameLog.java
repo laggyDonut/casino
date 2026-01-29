@@ -1,5 +1,10 @@
 package de.edvschuleplattling.irgendwieanders.model.games;
 
+import de.edvschuleplattling.irgendwieanders.model.Useraccount;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Past;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +25,11 @@ public class GameLog implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    private Useraccount user;
+
     // --- ZEITPUNKT DES EVENTS ---
+    @Past
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
