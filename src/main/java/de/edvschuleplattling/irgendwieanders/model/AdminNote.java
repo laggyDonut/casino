@@ -21,7 +21,7 @@ public class AdminNote implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Useraccount author; // Welcher Admin hat sie geschrieben?
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false, updatable = false)

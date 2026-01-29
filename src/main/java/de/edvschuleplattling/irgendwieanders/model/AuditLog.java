@@ -5,6 +5,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "audit_log", indexes = {
+        @Index(name = "idx_audit_actor", columnList = "actor_id"),
+        @Index(name = "idx_audit_target", columnList = "target_id"),
+        @Index(name = "idx_audit_created", columnList = "createdAt")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,8 +57,8 @@ public class AuditLog {
     public String toString() {
         return "AuditLog{" +
                 "id=" + id +
-                ", actor=" + actor +
-                ", target=" + target +
+                ", actorId=" + (actor != null ? actor.getId() : "null") + // Nur ID
+                ", targetId=" + (target != null ? target.getId() : "null") + // Nur ID
                 ", actionType=" + actionType +
                 ", actionDetails='" + actionDetails + '\'' +
                 ", createdAt=" + createdAt +
