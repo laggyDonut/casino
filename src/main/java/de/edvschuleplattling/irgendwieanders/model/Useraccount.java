@@ -22,49 +22,62 @@ public class Useraccount implements Serializable {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    // Email verifiziert
     @Column(nullable = true)
-    private LocalDateTime email_verified_at;
+    private LocalDateTime emailVerifiedAt;
 
-    // Passwort
+    // Passwort, 12 Zeichen, Groß/Klein/Zahl/Sonderzeichen
     @Column(nullable = false, length = 255)
-    private transient String password_hash;
+    private String passwordHash;
 
+    // ist Account gesperrt
     @Column(nullable = false)
-    private boolean is_locked;
+    private boolean isLocked;
 
+    // Wann wurde Account gesperrt
     @Column(nullable = true)
-    private LocalDateTime locked_at;
+    private LocalDateTime lockedAt;
 
-    // Wenn Account gelöscht wird
+    // Wann wurde Account gelöscht
     @Column(nullable = true)
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     // Wenn Account erstellt wird
     @Column(nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     // Wenn Account geupdatet wird
     @Column(nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
+    //Rolle des Accounts
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
-    private LocalDateTime password_reset_date;
+    // Wann Passwort zurückgesetzt
+    @Column(nullable = true)
+    private LocalDateTime passwordResetDate;
 
-    //@Column(nullable = false)
-    //@OneToOne(mappedBy = "id")
-    //private Wallet wallet;
+    // Loginversuche des Users
+    @Column
+    private int loginAttempts;
+
+    // Geld vom Spieler
+    @OneToOne
+    private Wallet wallet;
+
+    // Profil vom Spieler
+    @OneToOne
+    private Userprofile userProfile;
 
     // Konstruktor für neue User
-    public Useraccount(String email, String password_hash) {
+    public Useraccount(String email, String passwordHash) {
         this.email = email;
-        this.password_hash = password_hash;
-        this.is_locked = false;
-        this.created_at = LocalDateTime.now();
-        this.updated_at = this.created_at;
+        this.passwordHash = passwordHash;
+        this.isLocked = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = this.createdAt;
         this.role = de.edvschuleplattling.irgendwieanders.model.Role.GAMER;
     }
 
@@ -73,7 +86,7 @@ public class Useraccount implements Serializable {
         return "Useraccount{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", is_locked=" + is_locked +
+                ", is_locked=" + isLocked +
                 '}';
     }
 }
