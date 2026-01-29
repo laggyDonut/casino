@@ -2,64 +2,61 @@ package de.edvschuleplattling.irgendwieanders.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "admin_audit_logs",
-        indexes = {
-                @Index(name = "idx_audit_actor", columnList = "actor_user_id"),
-                @Index(name = "idx_audit_target", columnList = "target_user_id"),
-                @Index(name = "idx_audit_action", columnList = "action_type"),
-                @Index(name = "idx_audit_created", columnList = "created_at")
-        }
-)
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // Pflicht für JPA
-@AllArgsConstructor
-@Builder
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuditLog {
 
-    // === Primärschlüssel ===============================================
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // === Wer hat gehandelt? ============================================
-    @Column(name = "actor_user_id", nullable = false)
-    private Long actorUserId;
+    // BEZIEHUNG: Der Admin, der die Aktion ausführt
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Useraccount actor;
 
-    // === Ziel der Aktion (optional) ====================================
-    @Column(name = "target_user_id")
-    private Long targetUserId;
+    // BEZIEHUNG: Der User, der bearbeitet wurde (optional, da manche Aktionen global sein könnten)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Useraccount target;
 
-    // === Aktionstyp =====================================================
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_type", length = 50, nullable = false)
+    @Column( nullable = false, length = 50)
     private AuditActionType actionType;
 
+    @Column(length = 70)
+    private String actionDetails; // z.B. "Grund: Betrugsverdacht"
 
-    // === Detailinformationen (JSON/Text) ===============================
-    @Column(name = "action_details", columnDefinition = "TEXT")
-    private String actionDetails;
+    // Optional: IP-Adresse zur Sicherheit
+    //@Column(name = "ip_address", length = 45)
+    //private String ipAddress;
 
-    // === Metadaten ======================================================
-    @Column(name = "ip_address", length = 45)
-    private String ipAddress;
-
-    @Column(name = "user_agent", length = 255)
-    private String userAgent;
-
-    // === Zeitstempel ===================================================
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // === Lifecycle Callback ===========================================
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public AuditLog(Useraccount actor, Useraccount target, AuditActionType actionType, String actionDetails) {
+        this.actor = actor;
+        this.target = target;
+        this.actionType = actionType;
+        this.actionDetails = actionDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "AuditLog{" +
+                "id=" + id +
+                ", actor=" + actor +
+                ", target=" + target +
+                ", actionType=" + actionType +
+                ", actionDetails='" + actionDetails + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }
