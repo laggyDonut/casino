@@ -36,13 +36,13 @@ public class Transaction {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    public Transaction(int id, Useraccount useraccount, TransactionType type, double cashAmount, TransactionStatus status, LocalDateTime dateTime) {
+    public Transaction(int id, Useraccount useraccount, TransactionType type, double cashAmount, TransactionStatus status) {
         this.id = id;
         this.useraccount = useraccount;
         this.type = type;
         this.cashAmount = cashAmount;
         this.status = status;
-        this.dateTime = dateTime;
+        this.dateTime = LocalDateTime.now();
     }
 
     @Override

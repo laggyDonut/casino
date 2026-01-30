@@ -25,13 +25,13 @@ public class IdVerification {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 30)
     private String surname;
 
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 30)
     private String birthplace;
 
     @Column(nullable = false)
@@ -43,11 +43,11 @@ public class IdVerification {
     @Column(nullable = false)
     private int houseNumber;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 30)
     private String street;
 
-    @Column(nullable = false)
-    private int zip;
+    @Column(nullable = false, length = 5) //plz genormt auf 5 Stellen
+    private String zip;
 
     @Column(nullable = false, unique = true, length = 9) //Ausweis ist 9-stellig genormt
     private String idNumber;
@@ -55,7 +55,7 @@ public class IdVerification {
     @Column(nullable = false)
     private LocalDate validUntil;
 
-    public IdVerification(int id, Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, int zip, String idNumber, LocalDate validUntil) {
+    public IdVerification(int id, Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, String zip, String idNumber, LocalDate validUntil) {
         this.id = id;
         this.useraccount = useraccount;
         this.name = name;

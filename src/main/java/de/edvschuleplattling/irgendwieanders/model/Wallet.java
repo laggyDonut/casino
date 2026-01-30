@@ -29,9 +29,30 @@ public class Wallet {
     @Column(nullable = false)
     private double bonusBalance;
 
-    @Column(nullable = true)
+    @Column(nullable = false) //false weil Standard = 0
     private double depositLimitMonthly;
 
-    @Column(nullable = true)
+    @Column(nullable = false) //false weil Standard = 0
     private double depositLimitMonthlyCounter;
+
+    public Wallet(int id, Useraccount useraccount, double balance, double bonusBalance, double depositLimitMonthly, double depositLimitMonthlyCounter) {
+        this.id = id;
+        this.useraccount = useraccount;
+        this.balance = balance;
+        this.bonusBalance = bonusBalance;
+        this.depositLimitMonthly = depositLimitMonthly;
+        this.depositLimitMonthlyCounter = depositLimitMonthlyCounter;
+    }
+
+    @Override
+    public String toString() {
+        return "Wallet{" +
+                "id=" + id +
+                ", useraccount=" + useraccount +
+                ", balance=" + balance +
+                ", bonusBalance=" + bonusBalance +
+                ", depositLimitMonthly=" + depositLimitMonthly +
+                ", depositLimitMonthlyCounter=" + depositLimitMonthlyCounter +
+                '}';
+    }
 }
