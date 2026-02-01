@@ -20,24 +20,31 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @ManyToOne(optional = false)
     private Useraccount useraccount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
     @Column(nullable = false)
-    private double cashAmount;
+    private long cashAmount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    public Transaction(int id, Useraccount useraccount, TransactionType type, double cashAmount, TransactionStatus status) {
+    @PreUpdate  //bei Update von z.B. PROCESSING auf COMPLETED wird onUpdate() ausgeführt und dateTime wird aktualisiert
+    public void onUpdate() {
+        this.dateTime = LocalDateTime.now();
+    }
+
+    public Transaction(long id, Useraccount useraccount, TransactionType type, long cashAmount, TransactionStatus status) {
         this.id = id;
         this.useraccount = useraccount;
         this.type = type;

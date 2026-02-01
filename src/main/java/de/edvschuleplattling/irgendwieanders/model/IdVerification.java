@@ -18,7 +18,7 @@ public class IdVerification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @OneToOne(optional = false)
     private Useraccount useraccount;
@@ -36,6 +36,7 @@ public class IdVerification {
     private String birthplace;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EyeColor eyeColor;
 
     @Column(nullable = false)
@@ -56,7 +57,7 @@ public class IdVerification {
     @Column(nullable = false)
     private LocalDate validUntil;
 
-    public IdVerification(int id, Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, String zip, String idNumber, LocalDate validUntil) {
+    public IdVerification(long id, Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, String zip, String idNumber, LocalDate validUntil) {
         this.id = id;
         this.useraccount = useraccount;
         this.name = name;

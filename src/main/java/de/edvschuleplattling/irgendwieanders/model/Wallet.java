@@ -19,24 +19,24 @@ public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @OneToOne(optional = false)
     private Useraccount useraccount;
 
     @Column(nullable = false)
-    private double balance;
+    private long balance;
 
     @Column(nullable = false)
-    private double bonusBalance;
+    private long bonusBalance;
 
     @Column(nullable = false) //false weil Standard = 0
-    private double depositLimitMonthly;
+    private long depositLimitMonthly;
 
     @Column(nullable = false) //false weil Standard = 0
-    private double depositLimitMonthlyCounter;
+    private long depositLimitMonthlyCounter;
 
-    public Wallet(int id, Useraccount useraccount, double balance, double bonusBalance, double depositLimitMonthly, double depositLimitMonthlyCounter) {
+    public Wallet(long id, Useraccount useraccount, long balance, long bonusBalance, long depositLimitMonthly, long depositLimitMonthlyCounter) {
         this.id = id;
         this.useraccount = useraccount;
         this.balance = balance;
