@@ -1,4 +1,4 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement;
 
 public enum Role {
     SUPERADMIN, //Darf andere Admins verwalten

@@ -1,5 +1,6 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement;
 
+import de.edvschuleplattling.irgendwieanders.model.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;

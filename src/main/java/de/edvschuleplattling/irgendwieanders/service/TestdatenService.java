@@ -1,9 +1,9 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
-import de.edvschuleplattling.irgendwieanders.model.AuditActionType;
-import de.edvschuleplattling.irgendwieanders.model.AuditLog;
-import de.edvschuleplattling.irgendwieanders.model.Role;
-import de.edvschuleplattling.irgendwieanders.model.Useraccount;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditActionType;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditLog;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Role;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.repository.AuditLogRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import jakarta.transaction.Transactional;

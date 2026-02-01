@@ -1,6 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.repository;
 
-import de.edvschuleplattling.irgendwieanders.model.AuditLog;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

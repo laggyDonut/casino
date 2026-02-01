@@ -1,5 +1,6 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement;
 
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

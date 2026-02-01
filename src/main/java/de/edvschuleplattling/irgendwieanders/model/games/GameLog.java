@@ -1,11 +1,10 @@
 package de.edvschuleplattling.irgendwieanders.model.games;
 
-import de.edvschuleplattling.irgendwieanders.model.Useraccount;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;

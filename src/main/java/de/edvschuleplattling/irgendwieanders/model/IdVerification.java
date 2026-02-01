@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.model;
 
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
