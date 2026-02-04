@@ -1,6 +1,9 @@
 package de.edvschuleplattling.irgendwieanders.model.games.poker;
 
-import de.edvschuleplattling.irgendwieanders.model.Userprofiles;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Userprofile;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,23 +17,21 @@ import java.util.List;
 public class PokerPlayerConnection {
 
     // --- IDENTITÄT ---
+    @NotNull
     private Userprofile user;
 
     // User Chips on Table
+    @Min(0)
     private long tableChips;  // Die Chips, die er aktuell auf dem Tisch hat (können sich ändern)
 
     // --- SPIEL-STATUS (Live) ---
-    private long stack;         // Die Chips, die er vor sich liegen hat (Buy-In)
+    @NotNull
+    @Size(max = 2)
     private List<Card> holeCards;     // Die 2 geheimen Karten auf der Hand
+    @Min(0)
     private long currentRoundBet; // Was er in der aktuellen Wettrunde gesetzt hat
 
     private boolean hasFolded;        // Hat er aufgegeben?
     private boolean isAllIn;          // Hat er alles gesetzt?
 
-    public PokerPlayerConnection(Userprofile user, long initialStack) {
-        this.user = user;
-        this.stack = initialStack;
-        this.tableChips = initialStack; // Assuming table chips = stack initially
-        this.holeCards = new ArrayList<>();
-    }
 }
