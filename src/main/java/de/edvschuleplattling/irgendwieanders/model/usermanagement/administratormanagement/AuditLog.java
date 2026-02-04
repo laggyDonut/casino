@@ -53,7 +53,7 @@ public class AuditLog {
      * Die Art der durchgeführten Aktion (z. B. SPERREN, LÖSCHEN).
      */
     @Enumerated(EnumType.STRING)
-    @Column( nullable = false, length = 50)
+    @Column( nullable = false)
     private AuditActionType actionType;
 
     /**
