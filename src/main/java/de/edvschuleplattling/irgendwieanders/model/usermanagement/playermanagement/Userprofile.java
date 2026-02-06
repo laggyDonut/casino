@@ -2,6 +2,7 @@ package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagem
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

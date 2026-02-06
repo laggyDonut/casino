@@ -2,6 +2,7 @@ package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagem
 
 import de.edvschuleplattling.irgendwieanders.model.Wallet;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -70,6 +71,7 @@ public class Useraccount implements Serializable {
     // Profil vom Spieler
     @OneToOne
     private Userprofile userProfile;
+
 
     // Konstruktor für neue User
     public Useraccount(String email, String passwordHash) {
