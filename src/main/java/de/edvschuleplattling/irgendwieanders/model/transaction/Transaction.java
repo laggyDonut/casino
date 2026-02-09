@@ -1,4 +1,4 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.transaction;
 
 
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;

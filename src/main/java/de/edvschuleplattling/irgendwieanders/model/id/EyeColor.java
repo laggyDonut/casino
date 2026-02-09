@@ -1,4 +1,4 @@
-package de.edvschuleplattling.irgendwieanders.model;
+package de.edvschuleplattling.irgendwieanders.model.id;
 
 public enum EyeColor {
     BLAU, BRAUN, GRUEN, GRAU,
