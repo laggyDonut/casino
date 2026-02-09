@@ -1,12 +1,16 @@
 package de.edvschuleplattling.irgendwieanders.model.games.poker;
 
 import de.edvschuleplattling.irgendwieanders.Exceptions.CardStackStateException;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
 public class CardStack {
+    @NotNull
+    @Size(max=52)
     Stack<Card> cardStack = new Stack<>();
 
     public CardStack() {
