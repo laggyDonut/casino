@@ -1,6 +1,7 @@
 package de.edvschuleplattling.irgendwieanders.model.transaction;
 
 
+import de.edvschuleplattling.irgendwieanders.config.GlobalConstants;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

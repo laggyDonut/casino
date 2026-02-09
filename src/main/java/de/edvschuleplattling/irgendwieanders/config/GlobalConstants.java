@@ -11,9 +11,9 @@ public interface GlobalConstants {
 
     // Konstanten
     String CURR_KEY = "EUR";
-    long CURR_TO_COINS = 100; // 1 EUR = 100 Coins
+    long CURR_TO_COINS_FACTOR = 100; // 1 EUR = 100 Coins
 
     static long currToCoins(long amount) {
-        return CURR_TO_COINS*amount;
+        return CURR_TO_COINS_FACTOR*amount;
     }
 }
