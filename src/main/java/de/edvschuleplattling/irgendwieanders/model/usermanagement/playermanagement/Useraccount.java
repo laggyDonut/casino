@@ -2,7 +2,7 @@ package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagem
 
 import de.edvschuleplattling.irgendwieanders.model.Wallet;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,6 +21,7 @@ public class Useraccount implements Serializable {
 
     // Login
     @Column(nullable = false, unique = true, length = 150)
+    @Email
     private String email;
 
     // Email verifiziert

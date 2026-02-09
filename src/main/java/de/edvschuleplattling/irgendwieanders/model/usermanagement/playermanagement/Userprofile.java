@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagem
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,7 @@ public class Userprofile implements Serializable {
 
     //Geburtstag der Person
     @Column(nullable = false)
+    @Past
     private LocalDate birthday;
 
     //Ausweis verifiziert
