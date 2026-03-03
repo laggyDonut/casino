@@ -2,6 +2,8 @@ package de.edvschuleplattling.irgendwieanders.model.id;
 
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +42,8 @@ public class IdVerification {
     private EyeColor eyeColor;
 
     @Column(nullable = false)
+    @Min(60)
+    @Max(250)
     private int height;
 
     @Column(nullable = false)
@@ -57,8 +61,7 @@ public class IdVerification {
     @Column(nullable = false)
     private LocalDate validUntil;
 
-    public IdVerification(long id, Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, String zip, String idNumber, LocalDate validUntil) {
-        this.id = id;
+    public IdVerification(Useraccount useraccount, String name, String surname, LocalDate birthdate, String birthplace, EyeColor eyeColor, int height, int houseNumber, String street, String zip, String idNumber, LocalDate validUntil) {
         this.useraccount = useraccount;
         this.name = name;
         this.surname = surname;

@@ -1,6 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement;
 
-import de.edvschuleplattling.irgendwieanders.model.Wallet;
+import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;

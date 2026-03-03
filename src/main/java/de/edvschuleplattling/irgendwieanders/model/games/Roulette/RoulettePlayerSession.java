@@ -1,6 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.model.games.Roulette;
 
-import de.edvschuleplattling.irgendwieanders.model.Userprofiles;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Userprofile;
 import lombok.*;
 
 @Getter
@@ -11,7 +11,7 @@ import lombok.*;
 public class RoulettePlayerSession {
 
     private long gameId;
-    private Userprofiles user;
+    private Userprofile user;
 
     private RouletteBet bet;
     private Integer rolledNumber;
@@ -20,7 +20,7 @@ public class RoulettePlayerSession {
 
     private boolean finished;
 
-    public RoulettePlayerSession(long gameId, Userprofiles user) {
+    public RoulettePlayerSession(long gameId, Userprofile user) {
         this.gameId = gameId;
         this.user = user;
         this.finished = false;

@@ -45,8 +45,7 @@ public class Transaction {
         this.dateTime = LocalDateTime.now();
     }
 
-    public Transaction(long id, Useraccount useraccount, TransactionType type, long cashAmount, TransactionStatus status) {
-        this.id = id;
+    public Transaction(Useraccount useraccount, TransactionType type, long cashAmount, TransactionStatus status) {
         this.useraccount = useraccount;
         this.type = type;
         this.cashAmount = cashAmount;

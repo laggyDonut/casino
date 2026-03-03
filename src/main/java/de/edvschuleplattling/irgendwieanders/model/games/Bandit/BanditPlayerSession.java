@@ -1,6 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.model.games.Bandit;
 
-import de.edvschuleplattling.irgendwieanders.model.Userprofiles;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Userprofile;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 public class BanditPlayerSession {
 
     private long gameId;
-    private Userprofiles user;
+    private Userprofile user;
 
     private long betAmount;
     private List<Symbol> reels;
@@ -22,7 +22,7 @@ public class BanditPlayerSession {
 
     private boolean finished;
 
-    public BanditPlayerSession(long gameId, Userprofiles user) {
+    public BanditPlayerSession(long gameId, Userprofile user) {
         this.gameId = gameId;
         this.user = user;
         this.reels = new ArrayList<>();
