@@ -9,11 +9,12 @@ public interface GlobalConstants {
     int PASSWORD_MIN_LENGTH = 12;
     int PASSWORD_MAX_LENGTH = 255;
 
-    // Konstanten
-    String CURR_KEY = "EUR";
-    long CURR_TO_COINS_FACTOR = 100; // 1 EUR = 100 Coins
+    //Konstanten
+    long CASH_TO_POINTS_FACTOR = 1; // 1 Cent = 1 Point
 
-    static long currToCoins(long amount) {
-        return CURR_TO_COINS_FACTOR*amount;
+    public static long cashToPoints(long cashAmount) {
+        return cashAmount * CASH_TO_POINTS_FACTOR;
     }
 }
+
+

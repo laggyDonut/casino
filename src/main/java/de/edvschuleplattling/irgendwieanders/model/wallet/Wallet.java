@@ -36,7 +36,7 @@ public class Wallet {
     @Column(nullable = false) //false weil Standard = 0
     private long depositLimitMonthlyCounter;
 
-    public Wallet( Useraccount useraccount, long balance, long bonusBalance, long depositLimitMonthly, long depositLimitMonthlyCounter) {
+    public Wallet(Useraccount useraccount, long balance, long bonusBalance, long depositLimitMonthly, long depositLimitMonthlyCounter) {
         this.useraccount = useraccount;
         this.balance = balance;
         this.bonusBalance = bonusBalance;

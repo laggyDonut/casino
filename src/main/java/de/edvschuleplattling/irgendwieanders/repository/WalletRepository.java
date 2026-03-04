@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.repository;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,6 +18,10 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     Optional<Wallet> findById(long id);
 
     Optional<Wallet> findByUseraccount(Useraccount useraccount);
+
+    @Modifying
+    @Query("UPDATE Wallet w SET w.depositLimitMonthlyCounter = 0")
+    void resetAllDepositLimitMonthlyCounter();
 
 
 
