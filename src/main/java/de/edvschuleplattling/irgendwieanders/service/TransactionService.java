@@ -12,6 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -21,10 +26,45 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Transactional
-    public Transaction createTransaction (long useraccountID, TransactionType type, long cashAmount)
+    public List<Transaction> getAll(){
+        return transactionRepository.findAll();
+    }
+
+    @Transactional
+    public Transaction getById(long id){
+        return transactionRepository.findById(id).orElseThrow();
+    }
+
+    @Transactional
+    public List<Transaction> getAllByUseraccountId(long useraccountId){
+        return transactionRepository.findAllByUseraccountId(useraccountId);
+    }
+
+    @Transactional
+    public List<Transaction> getAllByType(TransactionType type){
+        return transactionRepository.findAllByType(type);
+    }
+
+    @Transactional
+    public List<Transaction> getAllByStatus(TransactionStatus status){
+        return transactionRepository.findAllByStatus(status);
+    }
+
+    @Transactional
+    public List<Transaction> getAllByDateTimeCreated(LocalDateTime dateTimeCreated){
+        return transactionRepository.findAllByDateTimeCreated(dateTimeCreated);
+    }
+
+    @Transactional
+    public List<Transaction> getAllByDateTimeLastUpdate(LocalDateTime dateTimeLasdtUpdate){
+        return transactionRepository.findAllByDateTimeLastUpdate(dateTimeLasdtUpdate);
+    }
+
+    @Transactional
+    public Transaction createTransaction (long useraccountId, TransactionType type, long cashAmount)
     {
         //Gibt es User?
-        Useraccount u = useraccountRepository.findById(useraccountID).orElseThrow();
+        Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
 
         //Ist cashAmount positiv?
         if (cashAmount <= 0){
@@ -59,16 +99,6 @@ public class TransactionService {
         transactionRepository.save(t);
 
         return t;
-    }
-
-    @Transactional
-    public void deleteTransaction(long id) {
-
-        //Gibt es die Id?
-        transactionRepository.findById(id).orElseThrow();
-
-        //Löschen
-        transactionRepository.deleteById(id);
     }
 
 }

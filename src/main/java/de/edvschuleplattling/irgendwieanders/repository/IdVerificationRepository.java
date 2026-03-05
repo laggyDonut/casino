@@ -17,7 +17,7 @@ public interface IdVerificationRepository extends JpaRepository<IdVerification, 
 
     Optional<IdVerification> findById(long id);
 
-    Optional<IdVerification> findByUseraccount(Useraccount useraccount);
+    Optional<IdVerification> findByUseraccountId(long useraccountId);
 
     List<IdVerification> findAllBySurnameAndName(String surname, String name);
 
