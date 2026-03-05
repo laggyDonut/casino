@@ -38,11 +38,14 @@ public class Transaction {
     private TransactionStatus status;
 
     @Column(nullable = false)
-    private LocalDateTime dateTime;
+    private LocalDateTime dateTimeCreated;
 
-    @PreUpdate  //bei Update von z.B. PROCESSING auf COMPLETED wird onUpdate() ausgeführt und dateTime wird aktualisiert
+    @Column(nullable = false)
+    private LocalDateTime dateTimeLastUpdate;
+
+    @PreUpdate  //bei jedem Update wird dateTimeLastUpdate automatisch aktualisiert
     public void onUpdate() {
-        this.dateTime = LocalDateTime.now();
+        this.dateTimeLastUpdate = LocalDateTime.now();
     }
 
     public Transaction(Useraccount useraccount, TransactionType type, long cashAmount, TransactionStatus status) {
@@ -50,7 +53,8 @@ public class Transaction {
         this.type = type;
         this.cashAmount = cashAmount;
         this.status = status;
-        this.dateTime = LocalDateTime.now();
+        this.dateTimeCreated = LocalDateTime.now();
+        this.dateTimeLastUpdate = LocalDateTime.now();
     }
 
     @Override
@@ -61,7 +65,8 @@ public class Transaction {
                 ", type=" + type +
                 ", cashAmount=" + cashAmount +
                 ", status=" + status +
-                ", dateTime=" + dateTime +
+                ", dateTimeCreated=" + dateTimeCreated +
+                ", dateTimeLastUpdate=" + dateTimeLastUpdate +
                 '}';
     }
 }

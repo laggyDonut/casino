@@ -92,11 +92,10 @@ public class IdVerificationService {
         if (idNumber != null) i.setIdNumber(idNumber);
 
         idVerificationRepository.save(i);
-        
+
         return i;
     }
 
-    @Transactional
     public void deleteIdVerification(long id) {
 
         //Gibt es die Id?

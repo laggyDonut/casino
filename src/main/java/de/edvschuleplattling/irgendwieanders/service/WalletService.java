@@ -65,7 +65,9 @@ import java.util.List;
                 case DEPOSIT:
 
                     //Falls depositLimitMonthlyCounter überschritten wurde, wird hier eine Exception geworfen
-                    if (w.getDepositLimitMonthlyCounter() + t.getCashAmount() > w.getDepositLimitMonthly()) {
+                    //Bei depositLimitMonthly = 0 --> es wird keine Exceptino geworfen, da 0 kein Limit bedeutet
+                    if (w.getDepositLimitMonthly() > 0 &&
+                            w.getDepositLimitMonthlyCounter() + t.getCashAmount() > w.getDepositLimitMonthly()) {
                         throw new DepositLimitMonthlyCounterException("Das monatliche Einzahlungslimit wurde überschritten.");
                     }
 
