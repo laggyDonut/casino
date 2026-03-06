@@ -63,7 +63,7 @@ public class WalletRestController {
         return ResponseEntity.ok(WalletDto.fromEntity(w));
     }
 
-    //HIER GEHTS WEITER --> Methode darf nicht erstellt werden, da User Balance ändern könnte in API
+   /* //HIER GEHTS WEITER --> Methode darf nicht erstellt werden, da User Balance ändern könnte in API
     // --> nur das kommt in den controller was der user von aussen steuern darf
     @PatchMapping("/updateWalletBalance/{id}")
     public ResponseEntity<SchuelerDto> update(@PathVariable long id, @RequestBody @Valid UpdateSchuelerRequest dto) {
@@ -99,7 +99,7 @@ public class WalletRestController {
         SchuelerDto schuelerDto = SchuelerDto.fromEntity(saved);
         //return new ResponseEntity<>(schuelerDto, HttpStatus.OK);
         return ResponseEntity.ok(schuelerDto);
-    }
+    } */
 
 
 
@@ -153,12 +153,12 @@ public class WalletRestController {
 
 
 
-    @DeleteMapping("/delete/{id}")
+  /*  @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable long id) {
 
         transactionService.deleteTransaction(id);
 
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
 }

@@ -11,6 +11,7 @@ import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-    @RequiredArgsConstructor
     @Transactional
     public class WalletService {
 
@@ -27,6 +27,20 @@ import java.util.NoSuchElementException;
         private final UseraccountRepository useraccountRepository;
         private final TransactionRepository transactionRepository;
         private final TransactionService transactionService;
+
+        //Konstruktor, damit lazy geladen werden kann
+    @Lazy
+    public WalletService(
+            WalletRepository walletRepository,
+            UseraccountRepository useraccountRepository,
+            TransactionRepository transactionRepository,
+            @org.springframework.context.annotation.Lazy TransactionService transactionService // HIER DAS LAZY
+    ) {
+        this.walletRepository = walletRepository;
+        this.useraccountRepository = useraccountRepository;
+        this.transactionRepository = transactionRepository;
+        this.transactionService = transactionService;
+    }
 
     @Transactional
     public List<Wallet> getAll(){

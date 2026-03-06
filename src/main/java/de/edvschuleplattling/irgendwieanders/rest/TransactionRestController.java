@@ -5,6 +5,7 @@ import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionCreateDto;
 import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionDto;
+import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionExecuteDto;
 import de.edvschuleplattling.irgendwieanders.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -113,5 +114,18 @@ public class TransactionRestController {
 
         return ResponseEntity.ok(TransactionDto.fromEntity(t));
     }
+
+    @PostMapping("/execute/useraccountId/{useraccountId}/type/{type}/cashAmount/{cashAmount}")
+    public ResponseEntity<TransactionExecuteDto> executeTransaction(@PathVariable long useraccountId,
+                                                @PathVariable TransactionType type, @PathVariable long cashAmount) {
+
+        TransactionExecuteDto dto = transactionService.executeTransaction(useraccountId, type, cashAmount);
+
+        return ResponseEntity.ok(dto);
+
+    }
+
+
+
 
 }

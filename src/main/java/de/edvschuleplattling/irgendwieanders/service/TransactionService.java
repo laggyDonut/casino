@@ -6,10 +6,15 @@ import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
+import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
+import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionExecuteDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,6 +29,7 @@ public class TransactionService {
     
     private final UseraccountRepository useraccountRepository;
     private final TransactionRepository transactionRepository;
+    private final WalletService walletService;
 
     @Transactional
     public List<Transaction> getAll(){
@@ -76,6 +82,23 @@ public class TransactionService {
         transactionRepository.save(t);
 
         return t;
+    }
+
+    @Transactional
+    public TransactionExecuteDto executeTransaction(long useraccountId, TransactionType type, long cashAmount){
+
+        //Gibt es Useraccount? Ja: Useraccount speichern und walletId verwenden
+        Useraccount u  = useraccountRepository.findById(useraccountId).orElseThrow();
+
+        //Erstellen und Speichern des Transaction-Objekts
+        Transaction t = createTransaction(useraccountId, type, cashAmount);
+
+        //Update von WalletBalance
+        Wallet w = walletService.updateWalletBalance(u.getWallet().getId(), cashAmount);
+
+        TransactionExecuteDto dto = TransactionExecuteDto.fromEntity(t, w);
+
+                return dto;
     }
 
     /**
