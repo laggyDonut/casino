@@ -1,14 +1,11 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
-import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditActionType;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditLog;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Role;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.repository.AuditLogRepository;
-import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +19,6 @@ public class TestdatenService {
 
     private final AuditLogRepository auditLogRepository;
     private final UseraccountRepository useraccountRepository;
-    private final TransactionService transactionService;
 
     // Testdaten anlegen
     public void anlegenTestdaten() {
@@ -48,12 +44,5 @@ public class TestdatenService {
         // AuditLog: admin führt Aktion an user aus
         log = new AuditLog(admin, user, AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
         auditLogRepository.save(log);
-
-
-
-
-        //Transaction anlegen
-        transactionService.createTransaction(user.getId(), TransactionType.DEPOSIT, 1000);
-        transactionService.createTransaction(user.getId(), TransactionType.PAY_OUT, 500);
     }
 }

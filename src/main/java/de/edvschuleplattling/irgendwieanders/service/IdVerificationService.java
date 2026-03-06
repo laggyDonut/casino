@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,59 +22,12 @@ public class IdVerificationService {
     private final UseraccountRepository useraccountRepository;
 
     @Transactional
-    public List<IdVerification> getAll(){
-        return idVerificationRepository.findAll();
-    }
-
-    @Transactional
-    public IdVerification getById(long id){
-        return idVerificationRepository.findById(id).orElseThrow();
-    }
-
-    @Transactional
-    public IdVerification getByUseraccount(long id){
-        return idVerificationRepository.findByUseraccountId(id).orElseThrow();
-    }
-
-    @Transactional
-    public List<IdVerification> getAllBySurnameAndName(String surname, String name){
-        return idVerificationRepository.findAllBySurnameAndName(surname, name);
-    }
-
-    @Transactional
-    public IdVerification getByIdNumber(String idNumber){
-        return idVerificationRepository.findByIdNumber(idNumber).orElseThrow();
-    }
-
-    @Transactional
-    public List<IdVerification> getAllByValidUntilLessThanEqual(LocalDate date){
-        return idVerificationRepository.findAllByValidUntilLessThanEqual(date);
-    }
-
-    @Transactional
-    public List<IdVerification> getAllExpiredIds(LocalDate date){
-        return idVerificationRepository.findAllExpiredIds(date);
-    }
-
-    @Transactional
-    public List<IdVerification> getAllValidIds(LocalDate date){
-        return idVerificationRepository.findAllValidIds(date);
-    }
-
-    @Transactional
-    public IdVerification createIdVerification (long useraccountId, String name, String surname, LocalDate birthdate,
+    public IdVerification createIdVerification (long useraccountID, String name, String surname, LocalDate birthdate,
                                  String birthplace, EyeColor eyeColor, int height, int houseNumber, String street,
                                  String zip, String idNumber, LocalDate validUntil)
     {
-
-        //Sind bereits Ausweisdaten hinterlegt?
-        if (idVerificationRepository.findByUseraccountId(useraccountId).isPresent()) {
-            throw new NoSuchElementException("Es sind bereits Ausweisdaten des User mit der ID " + useraccountId +
-                                                                                                 " hinterlegt.");
-        }
-
         //Gibt es User?
-        Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+        Useraccount u = useraccountRepository.findById(useraccountID).orElseThrow();
 
         //Ist User 18+?
         if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
@@ -103,7 +54,7 @@ public class IdVerificationService {
      */
     @Transactional
                                                 //Long/Integer damit null gesetzt werden kann
-    public IdVerification updateIdVerification(long id, Long useraccountId, String name, String surname, LocalDate birthdate,
+    public IdVerification updateIdVerification(long id, Long useraccountID, String name, String surname, LocalDate birthdate,
                                                String birthplace, EyeColor eyeColor, Integer height, Integer houseNumber, String street,
                                                String zip, String idNumber, LocalDate validUntil) {
 
@@ -125,8 +76,8 @@ public class IdVerificationService {
             i.setValidUntil(validUntil);
         }
         
-        if (useraccountId != null) {
-            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+        if (useraccountID != null) {
+            Useraccount u = useraccountRepository.findById(useraccountID).orElseThrow();
             i.setUseraccount(u);
         }
 

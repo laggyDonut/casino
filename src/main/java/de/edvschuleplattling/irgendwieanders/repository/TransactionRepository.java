@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.repository;
 import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -15,15 +16,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<Transaction> findById(long id);
 
-    List<Transaction> findAllByUseraccountId(long useraccountId);
+    List<Transaction> findAllByUseraccount(Useraccount useraccount);
 
     List<Transaction> findAllByType(TransactionType type);
 
     List<Transaction> findAllByStatus(TransactionStatus status);
 
-    List<Transaction> findAllByDateTimeCreated(LocalDateTime dateTimeCreated);
-
-    List<Transaction> findAllByDateTimeLastUpdate(LocalDateTime dateTimeLastUpdate);
+    List<Transaction> findAllByDateTime(LocalDateTime dateTime);
 
 
 
