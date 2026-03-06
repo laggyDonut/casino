@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
     @RequiredArgsConstructor
@@ -27,11 +28,32 @@ import java.util.List;
         private final TransactionRepository transactionRepository;
         private final TransactionService transactionService;
 
+    @Transactional
+    public List<Wallet> getAll(){
+        return walletRepository.findAll();
+    }
+
+    @Transactional
+    public Wallet getById(long id){
+        return walletRepository.findById(id).orElseThrow();
+    }
+
+    @Transactional
+    public Wallet getByUseraccountId(long useraccountId){
+        return walletRepository.findByUseraccountId(useraccountId).orElseThrow();
+    }
+
         @Transactional
-        public Wallet createWallet (long useraccountID)
+        public Wallet createWallet (long useraccountId)
         {
+
+            //Gibt es schon ein Wallet?
+            if (walletRepository.findByUseraccountId(useraccountId).isPresent()) {
+                throw new NoSuchElementException("Es gibt bereits ein Wallet des User mit der ID " + useraccountId + ".");
+            }
+
             //Gibt es User?
-            Useraccount u = useraccountRepository.findById(useraccountID).orElseThrow();
+            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
 
             //Objekt anlegen
             Wallet w = new Wallet(u, 0, 0, 0, 0);
@@ -42,13 +64,13 @@ import java.util.List;
 
         //HIER NOCH EINE JAVADOC BESCHREIBUNG FÜR METHODE UPDATEWALLETBALANCE, DA KOMPLEX!
         @Transactional
-        public Wallet updateWalletBalance(long id, long transactionID) {
+        public Wallet updateWalletBalance(long id, long transactionId) {
 
             //Gibt es Wallet?
             Wallet w = walletRepository.findById(id).orElseThrow();
 
             //Gibt es Transaction?
-            Transaction t = transactionRepository.findById(transactionID).orElseThrow();
+            Transaction t = transactionRepository.findById(transactionId).orElseThrow();
 
             //Zur Sicherheit: Wurde eine Transaction davor schon auf COMPLETED, FAILED ODER LOCKED gesetzt?
             if (t.getStatus() != TransactionStatus.PROCESSING) {
