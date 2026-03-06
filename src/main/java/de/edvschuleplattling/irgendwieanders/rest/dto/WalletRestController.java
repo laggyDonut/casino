@@ -63,43 +63,6 @@ public class WalletRestController {
         return ResponseEntity.ok(WalletDto.fromEntity(w));
     }
 
-    //HIER GEHTS WEITER --> Methode darf nicht erstellt werden, da User Balance ändern könnte in API
-    // --> nur das kommt in den controller was der user von aussen steuern darf
-    @PatchMapping("/updateWalletBalance/{id}")
-    public ResponseEntity<SchuelerDto> update(@PathVariable long id, @RequestBody @Valid UpdateSchuelerRequest dto) {
-
-        Optional<Schueler> schuelerOpt = schuelerRepository.findById(id);
-
-        // existiert Schüler mit der geg. ID?
-        if (schuelerOpt.isEmpty()) {
-            //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return ResponseEntity.notFound().build();
-        }
-
-        Schueler s = schuelerOpt.get();
-
-        // nur die übergebenen Werte übernehmen
-        if (dto.getName() != null) {
-            s.setName(dto.getName());
-        }
-        if (dto.getGeburtsdatum() != null) {
-            s.setGeburtsdatum(dto.getGeburtsdatum());
-        }
-        if (dto.getGuthabenInCent() != null) {
-            s.setGuthabenInCent(dto.getGuthabenInCent());
-        }
-        if (dto.getEignungstestPunkte() != null) {
-            s.setEignungstestPunkte(dto.getEignungstestPunkte());
-        }
-
-        // speichern in DB
-        Schueler saved = schuelerRepository.save(s);
-
-        // nach DTO konvertieren und zurück geben
-        SchuelerDto schuelerDto = SchuelerDto.fromEntity(saved);
-        //return new ResponseEntity<>(schuelerDto, HttpStatus.OK);
-        return ResponseEntity.ok(schuelerDto);
-    }
 
 
 
@@ -146,19 +109,5 @@ public class WalletRestController {
 
 
 
-
-
-
-
-
-
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable long id) {
-
-        transactionService.deleteTransaction(id);
-
-        return ResponseEntity.noContent().build();
-    }
 
 }

@@ -28,6 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<!-- npm-Befehl: npm.cmd auf Windows, npm auf Unix/Mac -->
+		<npm.executable>npm.cmd</npm.executable>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,6 +100,102 @@
 
 	<build>
 		<plugins>
+			<!-- Prüfen ob node_modules existiert → npm install ggf. überspringen -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>check-node-modules</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<exportAntProperties>true</exportAntProperties>
+							<target>
+								<!--
+									npm install überspringen wenn:
+									- node_modules existiert UND
+									- package-lock.json nicht älter als package.json ist
+									  (d.h. package.json wurde seit dem letzten install nicht verändert)
+								-->
+								<condition property="skip.npm.install">
+									<and>
+										<available file="${project.basedir}/frontend/node_modules" type="dir"/>
+										<uptodate
+											srcfile="${project.basedir}/frontend/package.json"
+											targetfile="${project.basedir}/frontend/package-lock.json"/>
+									</and>
+								</condition>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Frontend: lokales npm verwenden (kein Node-Download nötig) -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.5.0</version>
+				<executions>
+					<!-- 1. npm install – nur wenn node_modules noch nicht existiert -->
+					<execution>
+						<id>npm-install</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>${npm.executable}</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+							<workingDirectory>${project.basedir}/frontend</workingDirectory>
+							<skip>${skip.npm.install}</skip>
+						</configuration>
+					</execution>
+					<!-- 2. npm run build -->
+					<execution>
+						<id>npm-build</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>${npm.executable}</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+							<workingDirectory>${project.basedir}/frontend</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Build-Output (dist/) als statische Ressourcen ins JAR kopieren -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-frontend-dist</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>frontend/dist</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -114,6 +212,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<addResources>true</addResources>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
