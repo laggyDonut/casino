@@ -31,7 +31,7 @@ public class Transaction {
     private TransactionType type;
 
     @Column(nullable = false)
-    private long cashAmount;
+    private long amount;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -48,10 +48,10 @@ public class Transaction {
         this.dateTimeLastUpdate = LocalDateTime.now();
     }
 
-    public Transaction(Useraccount useraccount, TransactionType type, long cashAmount, TransactionStatus status) {
+    public Transaction(Useraccount useraccount, TransactionType type, long amount, TransactionStatus status) {
         this.useraccount = useraccount;
         this.type = type;
-        this.cashAmount = cashAmount;
+        this.amount = amount;
         this.status = status;
         this.dateTimeCreated = LocalDateTime.now();
         this.dateTimeLastUpdate = LocalDateTime.now();
@@ -63,7 +63,7 @@ public class Transaction {
                 "id=" + id +
                 ", useraccount=" + useraccount +
                 ", type=" + type +
-                ", cashAmount=" + cashAmount +
+                ", amount=" + amount +
                 ", status=" + status +
                 ", dateTimeCreated=" + dateTimeCreated +
                 ", dateTimeLastUpdate=" + dateTimeLastUpdate +

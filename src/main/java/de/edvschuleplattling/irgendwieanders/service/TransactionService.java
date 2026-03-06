@@ -1,7 +1,7 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
 import de.edvschuleplattling.irgendwieanders.Exceptions.ZeroOrNegativeValueException;
-import de.edvschuleplattling.irgendwieanders.Exceptions.StatusIsNullException;
+import de.edvschuleplattling.irgendwieanders.Exceptions.IsNullException;
 import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
@@ -11,16 +11,11 @@ import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionExecuteDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,34 +62,42 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction createTransaction (long useraccountId, TransactionType type, long cashAmount)
+    public Transaction createTransaction (long useraccountId, TransactionType type, long amount)
     {
         //Gibt es User?
         Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
 
-        //Ist cashAmount positiv?
-        if (cashAmount <= 0){
+        //Ist amount positiv?
+        if (amount <= 0){
             throw new ZeroOrNegativeValueException("Der Transaktionsbetrag muss positiv sein.");
         }
 
         //Objekt anlegen
-        Transaction t = new Transaction(u, type, cashAmount, TransactionStatus.PROCESSING);
+        Transaction t = new Transaction(u, type, amount, TransactionStatus.PROCESSING);
         transactionRepository.save(t);
 
         return t;
     }
 
     @Transactional
-    public TransactionExecuteDto executeTransaction(long useraccountId, TransactionType type, long cashAmount){
+    public TransactionExecuteDto executeTransaction(long useraccountId, TransactionType type, long amount){
 
         //Gibt es Useraccount? Ja: Useraccount speichern und walletId verwenden
         Useraccount u  = useraccountRepository.findById(useraccountId).orElseThrow();
 
+        //Prüfung ob Wallet hinterlegt ist
+        if (u.getWallet() == null) {
+            throw new IsNullException ("Dem User mit ID " + useraccountId + " wurde noch kein Wallet zugewiesen.");
+        }
+
         //Erstellen und Speichern des Transaction-Objekts
-        Transaction t = createTransaction(useraccountId, type, cashAmount);
+        Transaction t = createTransaction(useraccountId, type, amount);
+
+        //TODO: Hier könnten noch Prüfungen zwischen dem Erstellen der Transaktion und dem Update der WalletBalance
+        //TODO: eingetragen werden
 
         //Update von WalletBalance
-        Wallet w = walletService.updateWalletBalance(u.getWallet().getId(), cashAmount);
+        Wallet w = walletService.updateWalletBalance(u.getWallet().getId(), t.getId());
 
         TransactionExecuteDto dto = TransactionExecuteDto.fromEntity(t, w);
 
@@ -113,7 +116,7 @@ public class TransactionService {
 
         //Ist Status null?
         if (status == null) {
-            throw new StatusIsNullException("Status ist null.");
+            throw new IsNullException("Status ist null.");
         }
 
         t.setStatus(status);

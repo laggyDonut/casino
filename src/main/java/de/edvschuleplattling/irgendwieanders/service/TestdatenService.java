@@ -1,10 +1,13 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
+import de.edvschuleplattling.irgendwieanders.model.id.EyeColor;
+import de.edvschuleplattling.irgendwieanders.model.id.IdVerification;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditActionType;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement.AuditLog;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Role;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
+import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.repository.AuditLogRepository;
 import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
@@ -13,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -23,6 +27,8 @@ public class TestdatenService {
     private final AuditLogRepository auditLogRepository;
     private final UseraccountRepository useraccountRepository;
     private final TransactionService transactionService;
+    private final WalletService walletService;
+    private final IdVerificationService idVerificationService;
 
     // Testdaten anlegen
     public void anlegenTestdaten() {
@@ -48,12 +54,31 @@ public class TestdatenService {
         // AuditLog: admin führt Aktion an user aus
         log = new AuditLog(admin, user, AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
         auditLogRepository.save(log);
-
-
-
-
-        //Transaction anlegen
-        transactionService.createTransaction(user.getId(), TransactionType.DEPOSIT, 1000);
-        transactionService.createTransaction(user.getId(), TransactionType.PAY_OUT, 500);
     }
+
+
+        public void anlegenTestdatenYannick(){
+        Useraccount test1 = new Useraccount("test1@test.com", "hash_dummy");
+        Useraccount test2 = new Useraccount("test2@test.com", "hash_dummy");
+        useraccountRepository.save(test1);
+        useraccountRepository.save(test2);
+        //Wallet anlegen
+        Wallet walletTest1 = walletService.createWallet(test1.getId());
+        Wallet walletTest2 = walletService.createWallet(test2.getId());
+        //IdVerification anlegen
+        IdVerification idVerificationTest1 = idVerificationService.createIdVerification(test1.getId(),"idVerificationTest1", "idVerificationTest1", LocalDate.of(2000, 1, 1),
+                "TestOrt", EyeColor.OTHERS, 170, 1, "TestStraße", "12345", "123456789", LocalDate.of(2030, 1, 1));
+        IdVerification idVerificationTest2 = idVerificationService.createIdVerification(test2.getId(),"idVerificationTest2", "idVerificationTest2", LocalDate.of(2000, 1, 1),
+                "TestOrt", EyeColor.OTHERS, 170, 1, "TestStraße", "12345", "223456789", LocalDate.of(2030, 1, 1));
+        //Transaction anlegen
+        transactionService.createTransaction(test1.getId(), TransactionType.DEPOSIT, 1000);
+        transactionService.createTransaction(test2.getId(), TransactionType.PAY_OUT, 500);
+        //Setzen von Wallet und IdVerification in Useraccount
+        test1.setWallet(walletTest1);
+        test1.setIdVerification(idVerificationTest1);
+        test2.setWallet(walletTest2);
+        test2.setIdVerification(idVerificationTest2);
+        useraccountRepository.save(test1);
+        useraccountRepository.save(test2);
+        }
 }

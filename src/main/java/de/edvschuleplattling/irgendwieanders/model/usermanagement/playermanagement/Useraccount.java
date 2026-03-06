@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement;
 
+import de.edvschuleplattling.irgendwieanders.model.id.IdVerification;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -73,6 +74,9 @@ public class Useraccount implements Serializable {
     @OneToOne
     private Userprofile userProfile;
 
+    //Ausweisdaten vom Spieler
+    @OneToOne
+    private IdVerification idVerification;
 
     // Konstruktor für neue User
     public Useraccount(String email, String passwordHash) {

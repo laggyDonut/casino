@@ -1,20 +1,15 @@
-package de.edvschuleplattling.irgendwieanders.rest.dto;
+package de.edvschuleplattling.irgendwieanders.rest;
 
-import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
-import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
-import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
-import de.edvschuleplattling.irgendwieanders.service.TransactionService;
+import de.edvschuleplattling.irgendwieanders.rest.dto.WalletCreateDto;
+import de.edvschuleplattling.irgendwieanders.rest.dto.WalletDto;
 import de.edvschuleplattling.irgendwieanders.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/wallet")

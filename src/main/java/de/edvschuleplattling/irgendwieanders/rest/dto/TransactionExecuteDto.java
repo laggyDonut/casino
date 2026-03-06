@@ -17,7 +17,7 @@ public class TransactionExecuteDto {
 
     private TransactionType type;
 
-    private long cashAmount;
+    private long amount;
 
     private TransactionStatus status;
 
@@ -42,7 +42,7 @@ public class TransactionExecuteDto {
         dto.id = transaction.getId();
         dto.useraccountId = transaction.getUseraccount().getId();
         dto.type = transaction.getType();
-        dto.cashAmount = transaction.getCashAmount();
+        dto.amount = transaction.getAmount();
         dto.status = transaction.getStatus();
         dto.dateTimeCreated = transaction.getDateTimeCreated();
         dto.dateTimeLastUpdate = transaction.getDateTimeLastUpdate();

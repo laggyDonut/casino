@@ -110,16 +110,16 @@ public class TransactionRestController {
     @PostMapping("/create")
     public ResponseEntity<TransactionDto> createTransaction(@RequestBody @Valid TransactionCreateDto dto) {
 
-        Transaction t = transactionService.createTransaction(dto.getUseraccountId(), dto.getType(), dto.getCashAmount());
+        Transaction t = transactionService.createTransaction(dto.getUseraccountId(), dto.getType(), dto.getAmount());
 
         return ResponseEntity.ok(TransactionDto.fromEntity(t));
     }
 
-    @PostMapping("/execute/useraccountId/{useraccountId}/type/{type}/cashAmount/{cashAmount}")
+    @PostMapping("/execute/useraccountId/{useraccountId}/type/{type}/amount/{amount}")
     public ResponseEntity<TransactionExecuteDto> executeTransaction(@PathVariable long useraccountId,
-                                                @PathVariable TransactionType type, @PathVariable long cashAmount) {
+                                                @PathVariable TransactionType type, @PathVariable long amount) {
 
-        TransactionExecuteDto dto = transactionService.executeTransaction(useraccountId, type, cashAmount);
+        TransactionExecuteDto dto = transactionService.executeTransaction(useraccountId, type, amount);
 
         return ResponseEntity.ok(dto);
 

@@ -95,15 +95,15 @@ import java.util.NoSuchElementException;
             //TODO: und status auf LOCKED oder FAILED setzen
 
             //Umrechnung von balance in die virtuelle Währung
-            long points = GlobalConstants.cashToPoints(t.getCashAmount());
-
+            long points = GlobalConstants.cashToPoints(t.getAmount());
+            
             switch(t.getType()){
                 case DEPOSIT:
 
                     //Falls depositLimitMonthlyCounter überschritten wurde, wird hier eine Exception geworfen
                     //Bei depositLimitMonthly = 0 --> es wird keine Exceptino geworfen, da 0 kein Limit bedeutet
                     if (w.getDepositLimitMonthly() > 0 &&
-                            w.getDepositLimitMonthlyCounter() + t.getCashAmount() > w.getDepositLimitMonthly()) {
+                            w.getDepositLimitMonthlyCounter() + t.getAmount() > w.getDepositLimitMonthly()) {
                         throw new DepositLimitMonthlyCounterException("Das monatliche Einzahlungslimit wurde überschritten.");
                     }
 
@@ -119,7 +119,7 @@ import java.util.NoSuchElementException;
                     updateWalletDepositLimitMonthlyCounter(w.getId(), t.getId());
                     break;
                 case PAY_OUT:
-
+                    
                     //Zur Sicherheit: balance kann nicht negativ werden
                     if (w.getBalance() < points) {
 
@@ -128,7 +128,7 @@ import java.util.NoSuchElementException;
 
                     }
 
-                    w.setBalance(w.getBalance() - points);
+                    w.setBalance(w.getBalance() - t.getAmount());
 
                     //Hier könnten Methoden aufgerufen werden, welche das Geld auf das Bankkonto des Users buchen
                     //In unserem Fall wird das jedoch nur simuliert
@@ -191,7 +191,7 @@ import java.util.NoSuchElementException;
             //Nur DEPOSIT-Transactions dürfen verwendet werden
             if (t.getType() == TransactionType.DEPOSIT) {
 
-                w.setDepositLimitMonthlyCounter(w.getDepositLimitMonthlyCounter() + t.getCashAmount());
+                w.setDepositLimitMonthlyCounter(w.getDepositLimitMonthlyCounter() + t.getAmount());
 
                 walletRepository.save(w);
 

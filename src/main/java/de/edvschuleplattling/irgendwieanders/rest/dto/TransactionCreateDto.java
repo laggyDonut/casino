@@ -14,14 +14,14 @@ public class TransactionCreateDto {
 
     private TransactionType type;
 
-    private long cashAmount;
+    private long amount;
 
     public static TransactionCreateDto fromEntity(Transaction transaction) {
         TransactionCreateDto dto = new TransactionCreateDto();
 
         dto.setUseraccountId(transaction.getUseraccount().getId());
         dto.setType(transaction.getType());
-        dto.setCashAmount(transaction.getCashAmount());
+        dto.setAmount(transaction.getAmount());
 
         return dto;
     }

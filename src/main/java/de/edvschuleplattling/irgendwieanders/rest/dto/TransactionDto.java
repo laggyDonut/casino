@@ -21,7 +21,7 @@ public class TransactionDto {
 
     private TransactionType type;
 
-    private long cashAmount;
+    private long amount;
 
     private TransactionStatus status;
 
@@ -36,7 +36,7 @@ public class TransactionDto {
         dto.setId(transaction.getId());
         dto.setUseraccountId(transaction.getUseraccount().getId());
         dto.setType(transaction.getType());
-        dto.setCashAmount(transaction.getCashAmount());
+        dto.setAmount(transaction.getAmount());
         dto.setStatus(transaction.getStatus());
         dto.setDateTimeCreated(transaction.getDateTimeCreated());
         dto.setDateTimeLastUpdate(transaction.getDateTimeLastUpdate());
