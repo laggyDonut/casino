@@ -22,7 +22,7 @@ public class IdVerificationRestController {
     //User besitzt keine Möglichkeit zur Ansicht des Ausweisdaten.
 
     @PostMapping("/create")
-    public void createIdVerfication(@RequestBody @Valid IdVerificationCreateDto dto) {
+    public void createIdVerification(@RequestBody @Valid IdVerificationCreateDto dto) {
 
         idVerificationService.createIdVerification(dto);
 
