@@ -93,7 +93,7 @@ public class IdVerificationService {
             throw new ExpiredIdException("Der Ausweis ist bereits abgelaufen.");
         }
 
-        //Validierung durch Attributseinschränkung: idNumber=unique, height: min=60 max=250
+        //Validierung durch Attributeinschränkung: idNumber=unique, height: min=60 max=250
 
         //Objekt anlegen
         IdVerification i = new IdVerification(u, dto.getName(), dto.getSurname(), dto.getBirthdate(),
@@ -105,10 +105,6 @@ public class IdVerificationService {
         return i;
     }
 
-    /**
-     * Diese Methode aktualisiert ein bestehendes IdVerification-Objekt.
-     * Es werden nur Felder aktualisiert, die nicht null sind.
-     */
     @Transactional
                                                 //Long/Integer damit null gesetzt werden kann
     public IdVerification updateIdVerification(long id, Long useraccountId, String name, String surname, LocalDate birthdate,

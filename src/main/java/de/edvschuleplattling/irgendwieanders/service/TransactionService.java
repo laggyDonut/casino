@@ -87,7 +87,7 @@ public class TransactionService {
 
         return t;
     }
-
+    //Hier wird die Logik zur Transaktionserstellung und Aktualisierung des Wallet-Guthabens gebündelt
     @Transactional
     public TransactionExecuteDto executeTransaction(long useraccountId, TransactionType type, long amount){
 
@@ -119,10 +119,6 @@ public class TransactionService {
                 return dto;
     }
 
-    /**
-     * Diese Methode aktualisiert das Attribut status eines bestehenden Wallet-Objekts.
-     *
-     */
     @Transactional
     public Transaction updateTransactionStatus(long id, TransactionStatus status) {
 
@@ -136,7 +132,6 @@ public class TransactionService {
         }
 
         t.setStatus(status);
-
 
         transactionRepository.save(t);
 

@@ -30,10 +30,10 @@ public class Wallet {
     @Column(nullable = false)
     private long bonusBalance;
 
-    @Column(nullable = false) //false weil Standard = 0 --> 0 = kein Limit
+    @Column(nullable = false) //false, weil Standard = 0 --> 0 = kein Limit
     private long depositLimitMonthly;
 
-    @Column(nullable = false) //false weil Standard = 0
+    @Column(nullable = false) //false, weil Standard = 0
     private long depositLimitMonthlyCounter;
 
     public Wallet(Useraccount useraccount, long balance, long bonusBalance, long depositLimitMonthly, long depositLimitMonthlyCounter) {

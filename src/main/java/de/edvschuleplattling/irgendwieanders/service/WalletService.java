@@ -82,7 +82,6 @@ import java.util.NoSuchElementException;
             return w;
         }
 
-        //HIER NOCH EINE JAVADOC BESCHREIBUNG FÜR METHODE UPDATEWALLETBALANCE, DA KOMPLEX!
         @Transactional
         public Wallet updateWalletBalance(long id, long transactionId) {
 
@@ -222,15 +221,15 @@ import java.util.NoSuchElementException;
             walletRepository.resetAllDepositLimitMonthlyCounter();
         }
 
-    @Transactional
-    public void deleteWallet(long id) {
+        @Transactional
+        public void deleteWallet(long id) {
 
-        //Gibt es die Id?
-        walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
-                "mit der ID " + id + " gefunden."));
+            //Gibt es die Id?
+            walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                    "mit der ID " + id + " gefunden."));
 
-        //Löschen
-        walletRepository.deleteById(id);
+            //Löschen
+            walletRepository.deleteById(id);
+        }
+
     }
-
-}
