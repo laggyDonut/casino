@@ -10,7 +10,7 @@ import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.repository.WalletRepository;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -28,13 +28,16 @@ import java.util.NoSuchElementException;
         private final TransactionRepository transactionRepository;
         private final TransactionService transactionService;
 
-        //Konstruktor, damit lazy geladen werden kann
+    //Konstruktor wird hier manuell erstellt (kein RequiredArgsConstructor), damit lazy (Annotation) geladen werden kann
+    //Von transactionService wird erstmal ein Platzhalterobjekt erstellt.
+    //"Echtes" Objekt wird erst erstellt, wenn es von einer Methode aufgerufen wird
+
     @Lazy
     public WalletService(
             WalletRepository walletRepository,
             UseraccountRepository useraccountRepository,
             TransactionRepository transactionRepository,
-            @org.springframework.context.annotation.Lazy TransactionService transactionService // HIER DAS LAZY
+            @org.springframework.context.annotation.Lazy TransactionService transactionService
     ) {
         this.walletRepository = walletRepository;
         this.useraccountRepository = useraccountRepository;
@@ -49,12 +52,14 @@ import java.util.NoSuchElementException;
 
     @Transactional
     public Wallet getById(long id){
-        return walletRepository.findById(id).orElseThrow();
+        return walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                "mit der ID " + id + " gefunden."));
     }
 
     @Transactional
     public Wallet getByUseraccountId(long useraccountId){
-        return walletRepository.findByUseraccountId(useraccountId).orElseThrow();
+        return walletRepository.findByUseraccountId(useraccountId).orElseThrow(() -> new
+                EntityNotFoundException("Es wurde kein Wallet des Users mit der ID " + useraccountId + " gefunden."));
     }
 
         @Transactional
@@ -63,11 +68,12 @@ import java.util.NoSuchElementException;
 
             //Gibt es schon ein Wallet?
             if (walletRepository.findByUseraccountId(useraccountId).isPresent()) {
-                throw new NoSuchElementException("Es gibt bereits ein Wallet des User mit der ID " + useraccountId + ".");
+                throw new AlreadyCreatedException("Es gibt bereits ein Wallet des User mit der ID " + useraccountId + ".");
             }
 
             //Gibt es User?
-            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow(() -> new
+                    EntityNotFoundException("Es wurde kein User mit der ID " + useraccountId + " gefunden."));
 
             //Objekt anlegen
             Wallet w = new Wallet(u, 0, 0, 0, 0);
@@ -81,10 +87,12 @@ import java.util.NoSuchElementException;
         public Wallet updateWalletBalance(long id, long transactionId) {
 
             //Gibt es Wallet?
-            Wallet w = walletRepository.findById(id).orElseThrow();
+            Wallet w = walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                    "mit der ID " + id + " gefunden."));
 
             //Gibt es Transaction?
-            Transaction t = transactionRepository.findById(transactionId).orElseThrow();
+            Transaction t = transactionRepository.findById(transactionId).orElseThrow(() -> new EntityNotFoundException("Es wurde keine Transaktion " +
+                    "mit der ID " + transactionId + " gefunden."));
 
             //Zur Sicherheit: Wurde eine Transaction davor schon auf COMPLETED, FAILED ODER LOCKED gesetzt?
             if (t.getStatus() != TransactionStatus.PROCESSING) {
@@ -131,7 +139,7 @@ import java.util.NoSuchElementException;
                     w.setBalance(w.getBalance() - t.getAmount());
 
                     //Hier könnten Methoden aufgerufen werden, welche das Geld auf das Bankkonto des Users buchen
-                    //In unserem Fall wird das jedoch nur simuliert
+                    //In unserem Fall: Simulation
 
                     //Das Attribut status der Transaction wird nun auf COMPLETED gesetzt
                     transactionService.updateTransactionStatus(t.getId(), TransactionStatus.COMPLETED);
@@ -147,7 +155,8 @@ import java.util.NoSuchElementException;
         public Wallet updateWalletBonusBalance(long id, long bonusPoints) {
 
             //Gibt es Wallet?
-            Wallet w = walletRepository.findById(id).orElseThrow();
+            Wallet w = walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                    "mit der ID " + id + " gefunden."));
 
             //Ist Bonus > 0?
             if (bonusPoints <= 0) {
@@ -165,11 +174,12 @@ import java.util.NoSuchElementException;
         public Wallet updateWalletDepositLimitMonthly(long id, long depositLimitMonthly) {
 
             //Gibt es Wallet?
-            Wallet w = walletRepository.findById(id).orElseThrow();
+            Wallet w = walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                    "mit der ID " + id + " gefunden."));
 
             //Ist depositLimitMonthly > 0?
-            if (depositLimitMonthly <= 0) {
-                throw new ZeroOrNegativeValueException("Das Einzahlungslimit beträgt 0 oder hat einen negativen Wert.");
+            if (depositLimitMonthly < 0) {
+                throw new NegativeValueException("Das Einzahlungslimit hat einen negativen Wert.");
             }
 
             w.setDepositLimitMonthly(depositLimitMonthly);
@@ -183,10 +193,13 @@ import java.util.NoSuchElementException;
         public Wallet updateWalletDepositLimitMonthlyCounter(long id, long transactionID) {
 
             //Gibt es Wallet?
-            Wallet w = walletRepository.findById(id).orElseThrow();
+            Wallet w = walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                    "mit der ID " + id + " gefunden."));
 
             //Gibt es Transaction?
-            Transaction t = transactionRepository.findById(transactionID).orElseThrow();
+            Transaction t = transactionRepository.findById(transactionID).orElseThrow(() -> new
+                    EntityNotFoundException("Es wurde keine Transaktion " +
+                    "mit der ID " + transactionID + " gefunden."));
 
             //Nur DEPOSIT-Transactions dürfen verwendet werden
             if (t.getType() == TransactionType.DEPOSIT) {
@@ -213,34 +226,11 @@ import java.util.NoSuchElementException;
     public void deleteWallet(long id) {
 
         //Gibt es die Id?
-        walletRepository.findById(id).orElseThrow();
+        walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde kein Wallet " +
+                "mit der ID " + id + " gefunden."));
 
         //Löschen
         walletRepository.deleteById(id);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

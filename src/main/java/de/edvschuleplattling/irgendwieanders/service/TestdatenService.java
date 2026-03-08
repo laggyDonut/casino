@@ -9,8 +9,10 @@ import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanageme
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.repository.AuditLogRepository;
+import de.edvschuleplattling.irgendwieanders.repository.IdVerificationRepository;
 import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
+import de.edvschuleplattling.irgendwieanders.rest.dto.IdVerificationCreateDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class TestdatenService {
     private final TransactionService transactionService;
     private final WalletService walletService;
     private final IdVerificationService idVerificationService;
+    private final IdVerificationRepository idVerificationRepository;
 
     // Testdaten anlegen
     public void anlegenTestdaten() {
@@ -66,13 +69,13 @@ public class TestdatenService {
         Wallet walletTest1 = walletService.createWallet(test1.getId());
         Wallet walletTest2 = walletService.createWallet(test2.getId());
         //IdVerification anlegen
-        IdVerification idVerificationTest1 = idVerificationService.createIdVerification(test1.getId(),"idVerificationTest1", "idVerificationTest1", LocalDate.of(2000, 1, 1),
+        IdVerification idVerificationTest1 = new IdVerification(test1,"idVerificationTest1", "idVerificationTest1", LocalDate.of(2000, 1, 1),
                 "TestOrt", EyeColor.OTHERS, 170, 1, "TestStraße", "12345", "123456789", LocalDate.of(2030, 1, 1));
-        IdVerification idVerificationTest2 = idVerificationService.createIdVerification(test2.getId(),"idVerificationTest2", "idVerificationTest2", LocalDate.of(2000, 1, 1),
+        IdVerification idVerificationTest2 = new IdVerification(test2,"idVerificationTest2", "idVerificationTest2", LocalDate.of(2000, 1, 1),
                 "TestOrt", EyeColor.OTHERS, 170, 1, "TestStraße", "12345", "223456789", LocalDate.of(2030, 1, 1));
-        //Transaction anlegen
-        transactionService.createTransaction(test1.getId(), TransactionType.DEPOSIT, 1000);
-        transactionService.createTransaction(test2.getId(), TransactionType.PAY_OUT, 500);
+        //Speichern von IdVerification, sonst Absturz
+            idVerificationRepository.save(idVerificationTest1);
+            idVerificationRepository.save(idVerificationTest2);
         //Setzen von Wallet und IdVerification in Useraccount
         test1.setWallet(walletTest1);
         test1.setIdVerification(idVerificationTest1);

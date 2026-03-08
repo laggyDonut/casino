@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.rest.dto;
 import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -12,6 +13,7 @@ import lombok.Data;
 
 public class WalletCreateDto {
 
+    @NotNull
     private long useraccountId;
 
     public static WalletCreateDto fromEntity(Wallet wallet) {

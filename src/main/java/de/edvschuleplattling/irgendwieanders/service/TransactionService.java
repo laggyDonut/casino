@@ -2,6 +2,7 @@ package de.edvschuleplattling.irgendwieanders.service;
 
 import de.edvschuleplattling.irgendwieanders.Exceptions.ZeroOrNegativeValueException;
 import de.edvschuleplattling.irgendwieanders.Exceptions.IsNullException;
+import de.edvschuleplattling.irgendwieanders.config.GlobalConstants;
 import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
@@ -10,6 +11,7 @@ import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.repository.TransactionRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.rest.dto.TransactionExecuteDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,8 @@ public class TransactionService {
 
     @Transactional
     public Transaction getById(long id){
-        return transactionRepository.findById(id).orElseThrow();
+        return transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurden keine " +
+                "Transaktion mit der ID " + id + " gefunden."));
     }
 
     @Transactional
@@ -57,15 +60,21 @@ public class TransactionService {
     }
 
     @Transactional
-    public List<Transaction> getAllByDateTimeLastUpdate(LocalDateTime dateTimeLasdtUpdate){
-        return transactionRepository.findAllByDateTimeLastUpdate(dateTimeLasdtUpdate);
+    public List<Transaction> getAllByDateTimeLastUpdate(LocalDateTime dateTimeLastUpdate){
+        return transactionRepository.findAllByDateTimeLastUpdate(dateTimeLastUpdate);
+    }
+
+    @Transactional
+    public long getCountSuccessfulDeposits(long useraccountId){
+        return transactionRepository.findCountSuccessfulDeposits(useraccountId);
     }
 
     @Transactional
     public Transaction createTransaction (long useraccountId, TransactionType type, long amount)
     {
         //Gibt es User?
-        Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+        Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow(() -> new
+                EntityNotFoundException("Es wurde kein User mit der ID " + useraccountId + " gefunden."));
 
         //Ist amount positiv?
         if (amount <= 0){
@@ -83,7 +92,8 @@ public class TransactionService {
     public TransactionExecuteDto executeTransaction(long useraccountId, TransactionType type, long amount){
 
         //Gibt es Useraccount? Ja: Useraccount speichern und walletId verwenden
-        Useraccount u  = useraccountRepository.findById(useraccountId).orElseThrow();
+        Useraccount u  = useraccountRepository.findById(useraccountId).orElseThrow(() -> new
+                EntityNotFoundException("Es wurden kein User mit der ID " + useraccountId + " gefunden."));
 
         //Prüfung ob Wallet hinterlegt ist
         if (u.getWallet() == null) {
@@ -99,6 +109,11 @@ public class TransactionService {
         //Update von WalletBalance
         Wallet w = walletService.updateWalletBalance(u.getWallet().getId(), t.getId());
 
+        //Buchung von beispielsweise 2000 Points bei erster Einzahlung
+        if (getCountSuccessfulDeposits(useraccountId) == 1) {
+            walletService.updateWalletBonusBalance(u.getWallet().getId(), GlobalConstants.BONUS_POINTS_FIRST_DEPOSIT);
+        }
+
         TransactionExecuteDto dto = TransactionExecuteDto.fromEntity(t, w);
 
                 return dto;
@@ -111,8 +126,9 @@ public class TransactionService {
     @Transactional
     public Transaction updateTransactionStatus(long id, TransactionStatus status) {
 
-        //Gibt es User?
-        Transaction t = transactionRepository.findById(id).orElseThrow();
+        //Gibt es Transaktion?
+        Transaction t = transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurde" +
+                " keine Transaktion mit der ID " + id + " gefunden."));
 
         //Ist Status null?
         if (status == null) {

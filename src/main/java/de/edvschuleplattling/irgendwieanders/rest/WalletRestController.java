@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.rest;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.rest.dto.WalletCreateDto;
 import de.edvschuleplattling.irgendwieanders.rest.dto.WalletDto;
+import de.edvschuleplattling.irgendwieanders.rest.dto.WalletUpdateDepositLimitMonthlyDto;
 import de.edvschuleplattling.irgendwieanders.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WalletRestController {
 
+    //Aktuelle Methoden für User:
+
     private final WalletService walletService;
-
-    @GetMapping("/getAll")
-    public ResponseEntity<List<WalletDto>> getAll() {
-
-        List<WalletDto> dtos = walletService
-                .getAll()
-                .stream()
-                .map(t -> WalletDto.fromEntity(t))
-                .toList();
-
-        return ResponseEntity.ok(dtos);
-    }
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<WalletDto> getById(@PathVariable long id) {
@@ -58,102 +49,17 @@ public class WalletRestController {
         return ResponseEntity.ok(WalletDto.fromEntity(w));
     }
 
-   /* //HIER GEHTS WEITER --> Methode darf nicht erstellt werden, da User Balance ändern könnte in API
-    // --> nur das kommt in den controller was der user von aussen steuern darf
-    @PatchMapping("/updateWalletBalance/{id}")
-    public ResponseEntity<SchuelerDto> update(@PathVariable long id, @RequestBody @Valid UpdateSchuelerRequest dto) {
+    @PatchMapping("/updateWalletDepositLimitMonthly")
+    public ResponseEntity<WalletUpdateDepositLimitMonthlyDto> updateWalletDepositLimitMonthly(
+            @RequestBody @Valid WalletUpdateDepositLimitMonthlyDto dto) {
 
-        Optional<Schueler> schuelerOpt = schuelerRepository.findById(id);
+        Wallet w = walletService.updateWalletDepositLimitMonthly(dto.getId(), dto.getDepositLimitMonthly());
 
-        // existiert Schüler mit der geg. ID?
-        if (schuelerOpt.isEmpty()) {
-            //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return ResponseEntity.notFound().build();
-        }
+        WalletUpdateDepositLimitMonthlyDto dtoReturn = WalletUpdateDepositLimitMonthlyDto.fromEntity(w);
 
-        Schueler s = schuelerOpt.get();
+        return ResponseEntity.ok(dtoReturn);
 
-        // nur die übergebenen Werte übernehmen
-        if (dto.getName() != null) {
-            s.setName(dto.getName());
-        }
-        if (dto.getGeburtsdatum() != null) {
-            s.setGeburtsdatum(dto.getGeburtsdatum());
-        }
-        if (dto.getGuthabenInCent() != null) {
-            s.setGuthabenInCent(dto.getGuthabenInCent());
-        }
-        if (dto.getEignungstestPunkte() != null) {
-            s.setEignungstestPunkte(dto.getEignungstestPunkte());
-        }
-
-        // speichern in DB
-        Schueler saved = schuelerRepository.save(s);
-
-        // nach DTO konvertieren und zurück geben
-        SchuelerDto schuelerDto = SchuelerDto.fromEntity(saved);
-        //return new ResponseEntity<>(schuelerDto, HttpStatus.OK);
-        return ResponseEntity.ok(schuelerDto);
-    } */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /*  @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable long id) {
-
-        transactionService.deleteTransaction(id);
-
-        return ResponseEntity.noContent().build();
-    }*/
+    }
 
 }
+

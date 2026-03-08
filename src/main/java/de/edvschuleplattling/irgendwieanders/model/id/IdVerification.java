@@ -4,6 +4,7 @@ import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanageme
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class IdVerification {
     private String surname;
 
     @Column(nullable = false)
+    @PastOrPresent
     private LocalDate birthdate;
 
     @Column(nullable = false, length = 30)
