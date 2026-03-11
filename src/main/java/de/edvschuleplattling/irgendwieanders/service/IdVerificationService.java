@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
+import de.edvschuleplattling.irgendwieanders.Exceptions.AlreadyCreatedException;
 import de.edvschuleplattling.irgendwieanders.Exceptions.ExpiredIdException;
 import de.edvschuleplattling.irgendwieanders.Exceptions.UnderageException;
 import de.edvschuleplattling.irgendwieanders.model.id.EyeColor;
@@ -7,6 +8,8 @@ import de.edvschuleplattling.irgendwieanders.model.id.IdVerification;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.repository.IdVerificationRepository;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
+import de.edvschuleplattling.irgendwieanders.rest.dto.IdVerificationCreateDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +33,14 @@ public class IdVerificationService {
 
     @Transactional
     public IdVerification getById(long id){
-        return idVerificationRepository.findById(id).orElseThrow();
+        return idVerificationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurden keine " +
+                "Ausweisdaten mit der ID " + id + " gefunden."));
     }
 
     @Transactional
     public IdVerification getByUseraccount(long id){
-        return idVerificationRepository.findByUseraccountId(id).orElseThrow();
+        return idVerificationRepository.findByUseraccountId(id).orElseThrow(() -> new EntityNotFoundException("Es " +
+                "wurden keine Ausweisdaten des Useraccounts mit der ID " + id + " gefunden."));
     }
 
     @Transactional
@@ -45,7 +50,8 @@ public class IdVerificationService {
 
     @Transactional
     public IdVerification getByIdNumber(String idNumber){
-        return idVerificationRepository.findByIdNumber(idNumber).orElseThrow();
+        return idVerificationRepository.findByIdNumber(idNumber).orElseThrow(() -> new EntityNotFoundException("Es " +
+                "wurden keine Ausweisdaten mit der Ausweisnummer " + idNumber + " gefunden."));
     }
 
     @Transactional
@@ -64,50 +70,49 @@ public class IdVerificationService {
     }
 
     @Transactional
-    public IdVerification createIdVerification (long useraccountId, String name, String surname, LocalDate birthdate,
-                                 String birthplace, EyeColor eyeColor, int height, int houseNumber, String street,
-                                 String zip, String idNumber, LocalDate validUntil)
+    public IdVerification createIdVerification (IdVerificationCreateDto dto)
     {
 
         //Sind bereits Ausweisdaten hinterlegt?
-        if (idVerificationRepository.findByUseraccountId(useraccountId).isPresent()) {
-            throw new NoSuchElementException("Es sind bereits Ausweisdaten des User mit der ID " + useraccountId +
+        if (idVerificationRepository.findByUseraccountId(dto.getUseraccountId()).isPresent()) {
+            throw new AlreadyCreatedException("Es sind bereits Ausweisdaten des User mit der ID " + dto.getUseraccountId() +
                                                                                                  " hinterlegt.");
         }
 
         //Gibt es User?
-        Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+        Useraccount u = useraccountRepository.findById(dto.getUseraccountId()).orElseThrow(() -> new
+                EntityNotFoundException("Es wurden kein User mit der ID " + dto.getUseraccountId() + " gefunden."));
 
         //Ist User 18+?
-        if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
+        if (dto.getBirthdate().plusYears(18).isAfter(LocalDate.now())) {
             throw new UnderageException("Der User muss mindestens 18 Jahre alt sein.");
         }
 
         //Ist Ausweis heute noch gültig?
-        if (validUntil.isBefore(LocalDate.now())) {
+        if (dto.getValidUntil().isBefore(LocalDate.now())) {
             throw new ExpiredIdException("Der Ausweis ist bereits abgelaufen.");
         }
 
-        //Validierung durch Attributseinschränkung: idNumber=unique, height: min=60 max=250
+        //Validierung durch Attributeinschränkung: idNumber=unique, height: min=60 max=250
 
         //Objekt anlegen
-        IdVerification i = new IdVerification(u, name, surname, birthdate, birthplace, eyeColor, height, houseNumber, street, zip, idNumber, validUntil);
+        IdVerification i = new IdVerification(u, dto.getName(), dto.getSurname(), dto.getBirthdate(),
+                dto.getBirthplace(), dto.getEyeColor(), dto.getHeight(), dto.getHouseNumber(), dto.getStreet(),
+                dto.getZip(), dto.getIdNumber(), dto.getValidUntil());
+
         idVerificationRepository.save(i);
 
         return i;
     }
 
-    /**
-     * Diese Methode aktualisiert ein bestehendes IdVerification-Objekt.
-     * Es werden nur Felder aktualisiert, die nicht null sind.
-     */
     @Transactional
                                                 //Long/Integer damit null gesetzt werden kann
     public IdVerification updateIdVerification(long id, Long useraccountId, String name, String surname, LocalDate birthdate,
                                                String birthplace, EyeColor eyeColor, Integer height, Integer houseNumber, String street,
                                                String zip, String idNumber, LocalDate validUntil) {
 
-        IdVerification i = idVerificationRepository.findById(id).orElseThrow();
+        IdVerification i = idVerificationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es " +
+                "wurden keine Ausweisdaten mit der ID " + id + " gefunden."));
         
         //Alter muss geprüft werden. Falls nicht, könnte der User nachträglich sein Alter < 18 setzen
         if (birthdate != null) {
@@ -126,7 +131,8 @@ public class IdVerificationService {
         }
         
         if (useraccountId != null) {
-            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow();
+            Useraccount u = useraccountRepository.findById(useraccountId).orElseThrow(() -> new
+                    EntityNotFoundException("Es wurden kein User mit der ID " + useraccountId + " gefunden."));
             i.setUseraccount(u);
         }
 
@@ -148,7 +154,8 @@ public class IdVerificationService {
     public void deleteIdVerification(long id) {
 
         //Gibt es die Id?
-        idVerificationRepository.findById(id).orElseThrow();
+        idVerificationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Es wurden keine " +
+                "Ausweisdaten mit der ID " + id + " gefunden."));
 
         //Löschen
         idVerificationRepository.deleteById(id);

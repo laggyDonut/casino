@@ -20,6 +20,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Optional<Wallet> findByUseraccountId(long useraccountId);
 
+    //Query wird 1x pro Monat (01.01 00:00 Uhr) ausgeführt
     @Modifying
     @Query("UPDATE Wallet w SET w.depositLimitMonthlyCounter = 0")
     void resetAllDepositLimitMonthlyCounter();

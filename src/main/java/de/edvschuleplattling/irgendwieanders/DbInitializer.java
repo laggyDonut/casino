@@ -18,6 +18,8 @@ public class DbInitializer implements CommandLineRunner {
 
         testdatenService.anlegenTestdaten();
 
+        testdatenService.anlegenTestdatenYannick();
+
     }
 
 

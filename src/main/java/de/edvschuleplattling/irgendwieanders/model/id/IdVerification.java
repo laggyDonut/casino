@@ -4,6 +4,7 @@ import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanageme
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class IdVerification {
     private String surname;
 
     @Column(nullable = false)
+    @PastOrPresent
     private LocalDate birthdate;
 
     @Column(nullable = false, length = 30)
@@ -52,10 +54,10 @@ public class IdVerification {
     @Column(nullable = false, length = 30)
     private String street;
 
-    @Column(nullable = false, length = 5) //plz genormt auf 5 Stellen
+    @Column(nullable = false, length = 5) //auf 5 Stellen genormt
     private String zip;
 
-    @Column(nullable = false, unique = true, length = 9) //Ausweis ist 9-stellig genormt
+    @Column(nullable = false, unique = true, length = 9) // auf 9 Stellen genormt
     private String idNumber;
 
     @Column(nullable = false)

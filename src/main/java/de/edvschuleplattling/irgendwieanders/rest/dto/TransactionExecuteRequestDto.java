@@ -3,13 +3,14 @@ package de.edvschuleplattling.irgendwieanders.rest.dto;
 import de.edvschuleplattling.irgendwieanders.model.transaction.Transaction;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionStatus;
 import de.edvschuleplattling.irgendwieanders.model.transaction.TransactionType;
+import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class TransactionCreateDto {
+public class TransactionExecuteRequestDto {
 
     @NotNull
     private long useraccountId;
@@ -20,8 +21,8 @@ public class TransactionCreateDto {
     @NotNull
     private long amount;
 
-    public static TransactionCreateDto fromEntity(Transaction transaction) {
-        TransactionCreateDto dto = new TransactionCreateDto();
+    public static TransactionExecuteRequestDto fromEntity(Transaction transaction) {
+        TransactionExecuteRequestDto dto = new TransactionExecuteRequestDto();
 
         dto.setUseraccountId(transaction.getUseraccount().getId());
         dto.setType(transaction.getType());
