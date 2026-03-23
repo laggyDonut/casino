@@ -15,6 +15,12 @@ public class PokerWsController {
         this.pokerService = pokerService;
     }
 
+    // Wenn ein Client die Runde über "/app/poker/join" beitritt
+    @MessageMapping("/poker/join")
+    public void joinPoker(@Payload PokerActionDto pokerActionDto) {
+
+    }
+
     // Wenn ein Client etwas an "/app/poker/action" sendet, landet es hier
     @MessageMapping("/poker/action")
     public void handlePokerAction(@Payload PokerActionDto actionDto) {
