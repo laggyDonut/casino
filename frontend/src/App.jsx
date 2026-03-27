@@ -1,8 +1,11 @@
+import PokerGameTest from './PokerGameTest';
+
 function App() {
   return (
-    <h1>Hallo aus React &amp; Spring Boot!</h1>
+    <>
+      <PokerGameTest />
+    </>
   )
 }
 
 export default App
-

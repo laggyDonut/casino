@@ -1,7 +1,9 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
+import de.edvschuleplattling.irgendwieanders.service.poker.PokerGameListener;
 import de.simonaltschaeffl.poker.engine.PokerGame;
 import de.simonaltschaeffl.poker.engine.PokerGameConfiguration;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -12,6 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CasinoTableManager {
     // TableID -> PokerGame
     private final Map<String, PokerGame> activeTables = new ConcurrentHashMap<>();
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public CasinoTableManager(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     // Sucht einen freien Tisch oder erstellt einen neuen
     public synchronized String findOrCreateTableId() {
@@ -50,7 +57,10 @@ public class CasinoTableManager {
 
         PokerGame newGame = new PokerGame(config);
 
-        // TODO: Hier später deinen WebSocket-Listener dranhängen!
+        // Listener registrieren, damit Updates automatisch an die Clients gehen
+        PokerGameListener listener = new PokerGameListener(tableId, messagingTemplate);
+        listener.setGame(newGame);
+        newGame.addListener(listener);
 
         activeTables.put(tableId, newGame);
         return newGame;

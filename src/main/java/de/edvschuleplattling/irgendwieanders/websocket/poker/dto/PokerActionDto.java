@@ -5,8 +5,8 @@ import lombok.Data;
 import de.simonaltschaeffl.poker.model.ActionType;
 
 public record PokerActionDto(
-        long gameId,
-        long playerId,
+        String gameId,
+        String playerId,
         ActionType actionType,
         long amount
 ) {}
