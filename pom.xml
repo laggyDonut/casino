@@ -28,8 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<!-- npm-Befehl: npm.cmd auf Windows, npm auf Unix/Mac -->
-		<npm.executable>npm.cmd</npm.executable>
+		<!-- npm-Befehl: npm auf Unix/Mac -->
+		<npm.executable>npm</npm.executable>
 		<skip.npm.install>false</skip.npm.install>
 	</properties>
 	<dependencies>

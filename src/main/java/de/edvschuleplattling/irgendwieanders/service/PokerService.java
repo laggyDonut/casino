@@ -46,12 +46,17 @@ public class PokerService {
     }
 
     public void addPlayerToTable(PokerActionDto joinAction) {
-        PokerGame game = casinoTableManager.getTable(joinAction.gameId());
+        String gid = joinAction.gameId() != null ? joinAction.gameId().trim() : "";
+        PokerGame game = casinoTableManager.getTable(gid);
+        
+        // Safety retry for race conditions
         if (game == null) {
-            // Falls der Tisch noch nicht existiert (kann passieren, wenn er gerade erst erstellt wurde)
-            // Aber hier sollte der Controller sicherstellen, dass wir eine gültige ID haben.
-            // Für den Fall der Fälle erstellen wir ihn, falls ID passt, oder werfen Fehler.
-            throw new IllegalArgumentException("Table not found: " + joinAction.gameId());
+            try { Thread.sleep(100); } catch(Exception e) {}
+            game = casinoTableManager.getTable(gid);
+        }
+
+        if (game == null) {
+            throw new IllegalArgumentException("Table not found: [" + gid + "]");
         }
 
         // Parse playerId from DTO (expecting Long)
@@ -62,13 +67,23 @@ public class PokerService {
             throw new IllegalArgumentException("Invalid player ID format: " + joinAction.playerId());
         }
 
-        Useraccount user = useraccountRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        String displayName;
+        // Prioritize the custom name sent from the frontend
+        if (joinAction.displayName() != null && !joinAction.displayName().isBlank()) {
+            displayName = joinAction.displayName().trim();
+        } else {
+            Useraccount user = useraccountRepository.findById(userId).orElse(null);
+            if (user != null) {
+                Userprofile profile = user.getUserProfile();
+                displayName = (profile != null && profile.getDisplayName() != null && !profile.getDisplayName().isEmpty()) 
+                    ? profile.getDisplayName() 
+                    : "Player " + user.getId();
+            } else {
+                displayName = "Player_" + userId;
+            }
+        }
 
-        // Create Public Profile DTO to prevent exposing sensitive data
-        Userprofile profile = user.getUserProfile();
-        String displayName = (profile != null) ? profile.getDisplayName() : "Player " + user.getId();
-        PublicUserProfileDto publicProfile = new PublicUserProfileDto(user.getId(), displayName);
+        PublicUserProfileDto publicProfile = new PublicUserProfileDto(userId, displayName);
 
         // Spieler hinzufügen
         // Prüfen ob Spieler schon drin ist
@@ -77,7 +92,37 @@ public class PokerService {
 
         if (!alreadyIn) {
             PokerPlayerImpl newPlayer = new PokerPlayerImpl(publicProfile, 1000);
-            game.join(newPlayer);
+            try {
+                game.join(newPlayer);
+            } catch (de.simonaltschaeffl.poker.exception.GameFullException e) {
+                // Table is full - find/create a NEW table (excluding the current full one) and redirect
+                System.out.println("Table " + gid + " is full! Redirecting player " + userId + " to a new table.");
+                String newTableId = casinoTableManager.findOrCreateTableId(gid);
+                PokerGame newGame = casinoTableManager.getTable(newTableId);
+                
+                try {
+                    newGame.join(newPlayer);
+                } catch (Exception ex) {
+                    System.err.println("Failed to join new table " + newTableId + ": " + ex.getMessage());
+                    return;
+                }
+                
+                // Send redirect message to client so it reconnects to the new table
+                casinoTableManager.sendTableRedirect(gid, String.valueOf(userId), newTableId);
+                
+                // Auto-start on new table if enough players
+                if (newGame.getGameState().getPlayers().size() >= 2 &&
+                    (newGame.getGameState().getPhase() == GamePhase.PRE_GAME ||
+                     newGame.getGameState().getPhase() == GamePhase.HAND_ENDED)) {
+                    try {
+                        newGame.startHand();
+                    } catch (Exception ex) {
+                        System.err.println("Failed to start hand on new table: " + ex.getMessage());
+                    }
+                }
+                casinoTableManager.broadcastGameState(newTableId);
+                return; // Don't continue with the old table logic
+            }
         }
 
         // Auto-start game if enough players
@@ -93,6 +138,7 @@ public class PokerService {
             }
         }
 
-        // Update wird nun automatisch vom Listener gesendet
+        // Always force broadcast to update the UI lobby state, whether a hand started or not.
+        casinoTableManager.broadcastGameState(joinAction.gameId());
     }
 }
