@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +42,34 @@ class AdminRestControllerIntegrationTest {
 
     @Autowired
     private AuditLogRepository auditLogRepository;
+
+    @Test
+    void getUserDetails_success_writesViewDetailsAudit() throws Exception {
+        Useraccount admin = createUser(Role.ADMIN);
+        Useraccount target = createUser(Role.GAMER);
+
+        long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.VIEW_DETAILS);
+
+        mockMvc.perform(get("/api/admin/users/{id}", target.getId())
+                        .header("X-Actor-Id", admin.getId()))
+                .andExpect(status().isOk());
+
+        assertEquals(before + 1, countAuditEntries(admin.getId(), target.getId(), AuditActionType.VIEW_DETAILS));
+    }
+
+    @Test
+    void getUserDetails_forbidden_writesNoViewDetailsAudit() throws Exception {
+        Useraccount gamer = createUser(Role.GAMER);
+        Useraccount target = createUser(Role.GAMER);
+
+        long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.VIEW_DETAILS);
+
+        mockMvc.perform(get("/api/admin/users/{id}", target.getId())
+                        .header("X-Actor-Id", gamer.getId()))
+                .andExpect(status().isForbidden());
+
+        assertEquals(before, countAuditEntries(gamer.getId(), target.getId(), AuditActionType.VIEW_DETAILS));
+    }
 
     @Test
     void lockUser_success_changesStateAndWritesAudit() throws Exception {
