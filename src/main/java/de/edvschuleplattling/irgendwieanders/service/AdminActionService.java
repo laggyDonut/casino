@@ -132,9 +132,9 @@ public class AdminActionService {
         wallet.setBalance(newBalance);
         walletRepository.save(wallet);
 
-        String details = "amount=" + amountDelta + ";reason=" + reason;
+        String details = amountDelta + "|" + reason;
         if (details.length() > 70) {
-            throw new IllegalArgumentException("Betrag+Grund dürfen zusammen maximal 70 Zeichen enthalten.");
+            throw new IllegalArgumentException("Die kombinierte Audit-Meldung (Betrag und Grund) darf maximal 70 Zeichen enthalten.");
         }
         auditService.log(actor.getId(), target.getId(), AuditActionType.COIN_ADJUST, details);
         return wallet;
@@ -166,16 +166,34 @@ public class AdminActionService {
         if (password.length() < 12) {
             throw new IllegalArgumentException("Passwort muss mindestens 12 Zeichen lang sein.");
         }
-        if (!password.matches(".*[A-Z].*")) {
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+
+        for (int i = 0; i < password.length(); i++) {
+            char c = password.charAt(i);
+            if (Character.isUpperCase(c)) {
+                hasUpper = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLower = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else {
+                hasSpecial = true;
+            }
+        }
+
+        if (!hasUpper) {
             throw new IllegalArgumentException("Passwort muss mindestens einen Großbuchstaben enthalten.");
         }
-        if (!password.matches(".*[a-z].*")) {
+        if (!hasLower) {
             throw new IllegalArgumentException("Passwort muss mindestens einen Kleinbuchstaben enthalten.");
         }
-        if (!password.matches(".*\\d.*")) {
+        if (!hasDigit) {
             throw new IllegalArgumentException("Passwort muss mindestens eine Zahl enthalten.");
         }
-        if (!password.matches(".*[^a-zA-Z0-9].*")) {
+        if (!hasSpecial) {
             throw new IllegalArgumentException("Passwort muss mindestens ein Sonderzeichen enthalten.");
         }
     }

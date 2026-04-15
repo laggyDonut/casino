@@ -12,6 +12,6 @@ public class AdminCoinAdjustRequestDto {
     private Long amountDelta;
 
     @NotBlank(message = "Grund darf nicht leer sein.")
-    @Size(max = 50, message = "Grund darf maximal 50 Zeichen enthalten.")
+    @Size(max = 49, message = "Grund darf maximal 49 Zeichen enthalten.")
     private String reason;
 }
