@@ -55,7 +55,7 @@ public class AuditReadRestController {
         Page<AuditLog> auditLogPage = auditReadService.getAuditLogs(
                 page, size, actorId, targetId, actionType, dateFrom, dateTo, q
         );
-        Map<Long, String> usernamesById = resolveUsernames(auditLogPage);
+        Map<Long, String> usernamesById = resolveActorTargetUsernames(auditLogPage);
         Page<AuditLogResponseDto> dtoPage = auditLogPage.map(log -> AuditLogResponseDto.fromEntity(log, usernamesById));
         return ResponseEntity.ok(dtoPage);
     }
@@ -75,7 +75,7 @@ public class AuditReadRestController {
         Page<AuditLog> auditLogPage = auditReadService.getAuditLogs(
                 page, size, actorId, targetId, actionType, dateFrom, dateTo, q
         );
-        Map<Long, String> usernamesById = resolveUsernames(auditLogPage);
+        Map<Long, String> usernamesById = resolveActorTargetUsernames(auditLogPage);
 
         StringBuilder csv = new StringBuilder("actor,target,actorUsername,targetUsername,actionType,actionDetails,createdAt\n");
         for (AuditLog log : auditLogPage.getContent()) {
@@ -95,7 +95,7 @@ public class AuditReadRestController {
                 .body(csv.toString());
     }
 
-    private Map<Long, String> resolveUsernames(Page<AuditLog> auditLogPage) {
+    private Map<Long, String> resolveActorTargetUsernames(Page<AuditLog> auditLogPage) {
         Set<Long> ids = new HashSet<>();
         for (AuditLog log : auditLogPage.getContent()) {
             ids.add(log.getActorId());
