@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -47,15 +46,15 @@ public class TestdatenService {
         useraccountRepository.save(admin);
 
         // AuditLog: admin führt Aktion an user aus
-        AuditLog log = new AuditLog(admin, user, AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
+        AuditLog log = new AuditLog(admin.getId(), user.getId(), AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
         auditLogRepository.save(log);
 
         // AuditLog: admin führt Aktion an sich selbst aus
-        log = new AuditLog(admin, admin, AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
+        log = new AuditLog(admin.getId(), admin.getId(), AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
         auditLogRepository.save(log);
 
         // AuditLog: admin führt Aktion an user aus
-        log = new AuditLog(admin, user, AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
+        log = new AuditLog(admin.getId(), user.getId(), AuditActionType.LOCK_USER, "Test: AuditLog für Integrationstests");
         auditLogRepository.save(log);
     }
 

@@ -1,32 +1,23 @@
 package de.edvschuleplattling.irgendwieanders.model.usermanagement.administratormanagement;
 
-import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 /**
- * Repräsentiert einen einzelnen Protokolleintrag für administrative Tätigkeiten.
- * Dient der Nachvollziehbarkeit (Auditing) von Änderungen an Benutzerkonten.
+ * Unveränderlicher Audit-Log-Eintrag für administrative Aktionen.
  */
 @Entity
-/*
- * @Table definiert den Tabellennamen und Performance-Indizes.
- * Die Indizes sind essenziell, um auch bei vielen Log-Einträgen schnelle Suchabfragen
- * zu gewährleisten (Vermeidung von langsamen "Full Table Scans").
- */
 @Table(name = "audit_log", indexes = {
-        // Beschleunigt Abfragen nach dem Akteur (z. B. "Zeige alle Aktionen von Admin X")
         @Index(name = "idx_audit_actor", columnList = "actor_id"),
-        
-        // Beschleunigt Abfragen nach dem betroffenen User (z. B. "Zeige Historie von User Y")
         @Index(name = "idx_audit_target", columnList = "target_id"),
-        
-        // Optimiert die Sortierung und Filterung nach Zeit (z. B. "Logs der letzten 24h")
-        @Index(name = "idx_audit_created", columnList = "createdAt")
+        @Index(name = "idx_audit_created", columnList = "created_at")
 })
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 public class AuditLog {
@@ -35,66 +26,39 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Der Akteur (z. B. Administrator), der die Aktion initiiert hat.
-     * Kann null sein, falls es sich um eine systemseitige Aktion handelt.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Useraccount actor;
+    @Column(name = "actor_id", nullable = false, updatable = false)
+    private Long actorId;
 
-    /**
-     * Der betroffene Benutzeraccount, auf den sich die Aktion bezieht.
-     * Optional, da manche Aktionen globaler Natur sein könnten.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Useraccount target;
+    @Column(name = "target_id", updatable = false)
+    private Long targetId;
 
-    /**
-     * Die Art der durchgeführten Aktion (z. B. SPERREN, LÖSCHEN).
-     */
     @Enumerated(EnumType.STRING)
-    @Column( nullable = false)
+    @Column(name = "action_type", nullable = false, updatable = false)
     private AuditActionType actionType;
 
-    /**
-     * Zusätzliche Details oder Begründungen zur Aktion (z. B. "Grund: Verstoß gegen AGB").
-     */
-    @Column(length = 70)
+    @Column(name = "action_details", nullable = false, length = 70, updatable = false)
     private String actionDetails;
 
-    /** Zeitstempel der Erstellung des Log-Eintrags. */
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
- 
+
     /**
-     * Konstruktor für die Erstellung eines AuditLog-Eintrags.
+     * Erstellt einen neuen Audit-Log-Eintrag.
      *
-     * @param actor Der Akteur, der die Aktion durchgeführt hat.
-     * @param target Der Benutzeraccount, auf den sich die Aktion bezieht.
-     * @param actionType Die Art der durchgeführten Aktion.
-     * @param actionDetails Zusätzliche Details zur Aktion.
+     * @param actorId ID des auslösenden Benutzers
+     * @param targetId ID des betroffenen Benutzers (optional)
+     * @param actionType Aktionstyp
+     * @param actionDetails ergänzende Aktionsdetails
      */
-    public AuditLog(Useraccount actor, Useraccount target, AuditActionType actionType, String actionDetails) {
-        this.actor = actor;
-        this.target = target;
+    public AuditLog(Long actorId, Long targetId, AuditActionType actionType, String actionDetails) {
+        this.actorId = actorId;
+        this.targetId = targetId;
         this.actionType = actionType;
         this.actionDetails = actionDetails;
-    }
-
-    @Override
-    public String toString() {
-        return "AuditLog{" +
-                "id=" + id +
-                ", actorId=" + (actor != null ? actor.getId() : "null") + // Vermeidung von Zyklen/LazyLoading Problemen
-                ", targetId=" + (target != null ? target.getId() : "null") + // Vermeidung von Zyklen/LazyLoading Problemen
-                ", actionType=" + actionType +
-                ", actionDetails='" + actionDetails + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
     }
 }
