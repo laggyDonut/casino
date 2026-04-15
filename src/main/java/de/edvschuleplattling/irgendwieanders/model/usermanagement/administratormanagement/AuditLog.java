@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
         @Index(name = "idx_audit_actor", columnList = "actor_id"),
         // Beschleunigt Abfragen nach dem betroffenen User (z. B. "Zeige Historie von User Y")
         @Index(name = "idx_audit_target", columnList = "target_id"),
+        // Beschleunigt Filter auf Aktionstypen
+        @Index(name = "idx_audit_action_type", columnList = "action_type"),
         // Optimiert die Sortierung und Filterung nach Zeit (z. B. "Logs der letzten 24h")
         @Index(name = "idx_audit_created", columnList = "created_at")
 })

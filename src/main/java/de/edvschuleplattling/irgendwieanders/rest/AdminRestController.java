@@ -4,6 +4,7 @@ import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanageme
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.rest.dto.*;
 import de.edvschuleplattling.irgendwieanders.service.AdminActionService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,15 @@ import org.springframework.web.bind.annotation.*;
 public class AdminRestController {
 
     private final AdminActionService adminActionService;
+
+    @GetMapping("/{targetUserId}")
+    @Operation(summary = "Liest sensible User-Details und schreibt verpflichtend ein VIEW_DETAILS Audit-Log")
+    public ResponseEntity<AdminUserActionResponseDto> getUserDetails(
+            @RequestHeader("X-Actor-Id") Long actorId,
+            @PathVariable long targetUserId) {
+        Useraccount useraccount = adminActionService.getUserDetails(actorId, targetUserId);
+        return ResponseEntity.ok(AdminUserActionResponseDto.fromEntity(useraccount));
+    }
 
     @PostMapping("/{targetUserId}/lock")
     public ResponseEntity<AdminUserActionResponseDto> lockUser(

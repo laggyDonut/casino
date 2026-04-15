@@ -143,6 +143,13 @@ public class AdminActionService {
         return wallet;
     }
 
+    public Useraccount getUserDetails(Long actorId, long targetUserId) {
+        Useraccount actor = requireAdmin(actorId);
+        Useraccount target = getTargetUser(targetUserId);
+        auditService.log(actor.getId(), target.getId(), AuditActionType.VIEW_DETAILS, "Sensitive user details viewed");
+        return target;
+    }
+
     private Useraccount requireAdmin(Long actorId) {
         if (actorId == null) {
             throw new AccessDeniedException("Admin-Rechte erforderlich.");

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * Service zum paginierten Lesen von Audit-Einträgen mit optionalen Filtern.
@@ -41,8 +42,15 @@ public class AuditReadService {
             int size,
             Long actorId,
             Long targetId,
-            AuditActionType actionType
+            AuditActionType actionType,
+            LocalDateTime dateFrom,
+            LocalDateTime dateTo,
+            String detailsQuery
     ) {
+        if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+            throw new IllegalArgumentException("dateFrom darf nicht nach dateTo liegen.");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Specification<AuditLog> specification = (root, query, cb) -> {
@@ -55,6 +63,18 @@ public class AuditReadService {
             }
             if (actionType != null) {
                 predicates.add(cb.equal(root.get("actionType"), actionType));
+            }
+            if (dateFrom != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), dateFrom));
+            }
+            if (dateTo != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), dateTo));
+            }
+            if (detailsQuery != null && !detailsQuery.isBlank()) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("actionDetails")),
+                        "%" + detailsQuery.trim().toLowerCase() + "%"
+                ));
             }
             return cb.and(predicates.toArray(Predicate[]::new));
         };
