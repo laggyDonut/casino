@@ -30,7 +30,7 @@ public class Useraccount implements Serializable {
     private LocalDateTime emailVerifiedAt;
 
     // Passwort, 12 Zeichen, Groß/Klein/Zahl/Sonderzeichen
-    @Column(nullable = false, length = 255)
+    @Column(nullable = true, length = 255)
     private String passwordHash;
 
     // ist Account gesperrt
@@ -50,13 +50,12 @@ public class Useraccount implements Serializable {
     private LocalDateTime createdAt;
 
     // Wenn Account geupdatet wird
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     //Rolle des Accounts
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(length = 20)
+    private String role;
 
     // Wann Passwort zurückgesetzt
     @Column(nullable = true)
@@ -85,7 +84,7 @@ public class Useraccount implements Serializable {
         this.isLocked = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
-        this.role = Role.GAMER;
+        this.role = "Role_GAMER";
     }
 
     @PreUpdate
@@ -100,5 +99,10 @@ public class Useraccount implements Serializable {
                 ", email='" + email + '\'' +
                 ", isLocked=" + isLocked +
                 '}';
+    }
+
+    @PrePersist
+    public void onCreate(){
+        this.createdAt = LocalDateTime.now();
     }
 }
