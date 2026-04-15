@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 @Transactional
 public class AdminActionService {
 
+    private static final int MAX_AUDIT_DETAIL_LENGTH = 70;
+
     private final UseraccountRepository useraccountRepository;
     private final WalletRepository walletRepository;
     private final AuditService auditService;
@@ -133,7 +135,7 @@ public class AdminActionService {
         walletRepository.save(wallet);
 
         String details = amountDelta + "|" + reason;
-        if (details.length() > 70) {
+        if (details.length() > MAX_AUDIT_DETAIL_LENGTH) {
             throw new IllegalArgumentException("Die kombinierte Audit-Meldung (Betrag und Grund) darf maximal 70 Zeichen enthalten.");
         }
         auditService.log(actor.getId(), target.getId(), AuditActionType.COIN_ADJUST, details);
