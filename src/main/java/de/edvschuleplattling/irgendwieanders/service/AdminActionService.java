@@ -131,13 +131,14 @@ public class AdminActionService {
             throw new IllegalStateException("Die Coin-Anpassung würde zu negativem Guthaben führen.");
         }
 
-        wallet.setBalance(newBalance);
-        walletRepository.save(wallet);
-
         String details = amountDelta + "|" + reason;
         if (details.length() > MAX_AUDIT_DETAIL_LENGTH) {
             throw new IllegalArgumentException("Die kombinierte Audit-Meldung (Betrag und Grund) darf maximal 70 Zeichen enthalten.");
         }
+
+        wallet.setBalance(newBalance);
+        walletRepository.save(wallet);
+
         auditService.log(actor.getId(), target.getId(), AuditActionType.COIN_ADJUST, details);
         return wallet;
     }
