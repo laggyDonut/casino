@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: oidc-google
+  security:
+    oauth2:
+      client:
+        registration:
+#          google:
+#            client-id: ${GOOGLE_CLIENT_ID} # z.B. aus .env Datei
+#            client-secret: ${GOOGLE_CLIENT_SECRET} # z.B. aus .env Datei
+#            scope:
+#              - openid
+#              - email
+#              - profile
+          keycloak: # schule
+            client-id: ${SCHULE_CLIENT_ID} # z.B. aus .env Datei
+            client-secret: ${SCHULE_CLIENT_SECRET} # z.B. aus .env Datei
+            scope:
+              - openid
+              - email
+              - profile
+            #redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+#          google: # ?Parameter unten sind nötig, um refresh token zu bekommen
+#            issuer-uri: https://accounts.google.com
+#            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?access_type=offline #&prompt=consent
+##            token-uri: https://oauth2.googleapis.com/token
+##            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+##            user-name-attribute: sub
+          keycloak: # schule
+            issuer-uri: https://kc.cx.edvschule-plattling.de/realms/ads
+#            authorization-uri: https://kc.cx.edvschule-plattling.de/realms/ads/protocol/openid-connect/auth
+#            token-uri: https://kc.cx.edvschule-plattling.de/realms/ads/protocol/openid-connect/token
+#            user-info-uri: https://kc.cx.edvschule-plattling.de/realms/ads/protocol/openid-connect/userinfo
+#            jwk-set-uri: https://kc.cx.edvschule-plattling.de/realms/ads/protocol/openid-connect/certs
+#            user-name-attribute: preferred_username
+

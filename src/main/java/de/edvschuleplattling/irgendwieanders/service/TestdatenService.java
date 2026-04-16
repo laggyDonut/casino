@@ -42,7 +42,7 @@ public class TestdatenService {
         // Admin
         Useraccount admin = new Useraccount("admin@example.com", "hash_dummy");
         //admin.setDeleted_at(LocalDateTime.of(1970, 1, 1, 0, 0));
-        admin.setRole(Role.ADMIN);
+        admin.setRole("Role_ADMIN");
         useraccountRepository.save(admin);
 
         // AuditLog: admin führt Aktion an user aus
