@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.config;
 
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Role;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.service.UseraccountService;
@@ -50,7 +51,7 @@ public class OidcProvisioningUserService implements OAuth2UserService<OidcUserRe
             // Account anlegen
 
             // erst Rolle ermitteln.
-            String role = "Role_GAMER"; // default Rolle
+            Role role = Role.GAMER; // default Rolle
 //            Map<String, Object> claims = oidcUser.getUserInfo().getClaims();
 //            if (claims != null
 //                    && claims.containsKey("groups")) { // bei google null, bei keycloak ArrayList von z.B. ["fs2024", "fs2024_mail"] bei Schülern oder "Lehrer" bei Lehrern

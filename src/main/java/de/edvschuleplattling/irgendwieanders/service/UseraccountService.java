@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.service;
 
+import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Role;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ public class UseraccountService {
 
     private final UseraccountRepository useraccountRepository;
 
-    public Useraccount anlegen(String email, String role) {
+    public Useraccount anlegen(String email, Role role) {
         Useraccount useraccount = new Useraccount();
         useraccount.setEmail(email);
         useraccount.setRole(role);
