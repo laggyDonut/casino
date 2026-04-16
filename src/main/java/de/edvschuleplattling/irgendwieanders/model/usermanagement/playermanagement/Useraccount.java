@@ -54,8 +54,9 @@ public class Useraccount implements Serializable {
     private LocalDateTime updatedAt;
 
     //Rolle des Accounts
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private String role;
+    private Role role;
 
     // Wann Passwort zurückgesetzt
     @Column(nullable = true)
@@ -84,7 +85,7 @@ public class Useraccount implements Serializable {
         this.isLocked = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
-        this.role = "Role_GAMER";
+        this.role = Role.GAMER;
     }
 
     @PreUpdate
