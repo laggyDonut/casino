@@ -36,7 +36,7 @@ import java.util.Map;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper objectMapper) throws Exception {
 
         http
                 .authorizeHttpRequests(authorize -> authorize
@@ -73,10 +73,10 @@ public class SecurityConfig {
                 .requestCache(cache -> cache.disable())
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor((request, response, authException) ->
-                                        writeApiError(response, HttpStatus.UNAUTHORIZED, "Authentifizierung erforderlich.", request.getRequestURI()),
+                                        writeApiError(response, HttpStatus.UNAUTHORIZED, "Authentifizierung erforderlich.", request.getRequestURI(), objectMapper),
                                 new AntPathRequestMatcher("/api/**"))
                         .defaultAccessDeniedHandlerFor((request, response, accessDeniedException) ->
-                                        writeApiError(response, HttpStatus.FORBIDDEN, "Zugriff verweigert.", request.getRequestURI()),
+                                        writeApiError(response, HttpStatus.FORBIDDEN, "Zugriff verweigert.", request.getRequestURI(), objectMapper),
                                 new AntPathRequestMatcher("/api/**"))
                 )
 
@@ -123,7 +123,7 @@ public class SecurityConfig {
         return h;
     }
 
-    private static void writeApiError(HttpServletResponse response, HttpStatus status, String message, String path)
+    private static void writeApiError(HttpServletResponse response, HttpStatus status, String message, String path, ObjectMapper objectMapper)
             throws IOException {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", OffsetDateTime.now().toString());
@@ -133,7 +133,7 @@ public class SecurityConfig {
 
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 
 }

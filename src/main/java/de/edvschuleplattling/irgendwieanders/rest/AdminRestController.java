@@ -3,6 +3,7 @@ package de.edvschuleplattling.irgendwieanders.rest;
 import de.edvschuleplattling.irgendwieanders.model.usermanagement.playermanagement.Useraccount;
 import de.edvschuleplattling.irgendwieanders.model.wallet.Wallet;
 import de.edvschuleplattling.irgendwieanders.config.UserPrincipal;
+import de.edvschuleplattling.irgendwieanders.repository.UseraccountRepository;
 import de.edvschuleplattling.irgendwieanders.rest.dto.*;
 import de.edvschuleplattling.irgendwieanders.service.AdminActionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminRestController {
 
     private final AdminActionService adminActionService;
+    private final UseraccountRepository useraccountRepository;
 
     @GetMapping("/{targetUserId}")
     @Operation(summary = "Liest sensible User-Details und schreibt verpflichtend ein VIEW_DETAILS Audit-Log")
@@ -114,9 +116,18 @@ public class AdminRestController {
             return principalActorId;
         }
 
-        if (actorIdHeader == null) {
-            throw new AccessDeniedException("X-Actor-Id Header fehlt.");
+        String principalName = authentication.getName();
+        if (principalName == null || principalName.isBlank()) {
+            throw new AccessDeniedException("Authentifizierter Benutzer konnte nicht aufgelöst werden.");
         }
-        return actorIdHeader;
+
+        Useraccount principalUser = useraccountRepository.findByEmail(principalName)
+                .orElseThrow(() -> new AccessDeniedException("Authentifizierter Benutzer konnte nicht aufgelöst werden."));
+
+        if (actorIdHeader != null && !actorIdHeader.equals(principalUser.getId())) {
+            throw new AccessDeniedException("X-Actor-Id stimmt nicht mit dem angemeldeten Benutzer überein.");
+        }
+
+        return principalUser.getId();
     }
 }
