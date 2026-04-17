@@ -31,6 +31,9 @@ public class AdminActionService {
         Useraccount actor = requireAdmin(actorId);
         Useraccount target = getTargetUser(targetUserId);
 
+        if (actor.getId().equals(target.getId())) {
+            throw new IllegalStateException("Admin darf sich nicht selbst sperren.");
+        }
         if (target.isLocked()) {
             throw new IllegalStateException("User ist bereits gesperrt.");
         }

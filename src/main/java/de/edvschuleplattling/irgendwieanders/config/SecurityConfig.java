@@ -1,8 +1,12 @@
 package de.edvschuleplattling.irgendwieanders.config;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.edvschuleplattling.irgendwieanders.ApiErrorResponse;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -29,7 +34,7 @@ import java.io.IOException;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper objectMapper) throws Exception {
 
         http
                 .authorizeHttpRequests(authorize -> authorize
@@ -64,6 +69,14 @@ public class SecurityConfig {
                 )
 
                 .requestCache(cache -> cache.disable())
+                .exceptionHandling(exceptions -> exceptions
+                        .defaultAuthenticationEntryPointFor((request, response, authException) ->
+                                        writeApiError(response, HttpStatus.UNAUTHORIZED, "Authentifizierung erforderlich.", request.getRequestURI(), objectMapper),
+                                new AntPathRequestMatcher("/api/**"))
+                        .defaultAccessDeniedHandlerFor((request, response, accessDeniedException) ->
+                                        writeApiError(response, HttpStatus.FORBIDDEN, "Zugriff verweigert.", request.getRequestURI(), objectMapper),
+                                new AntPathRequestMatcher("/api/**"))
+                )
 
                 // CSRF ist für Browser-basierte Anwendungen wichtig.
                 // Wir verwenden CookieCsrfTokenRepository.withHttpOnlyFalse(), damit JavaScript das Token lesen kann.
@@ -106,6 +119,13 @@ public class SecurityConfig {
         var h = new OidcClientInitiatedLogoutSuccessHandler(repo);
         h.setPostLogoutRedirectUri("{baseUrl}/");
         return h;
+    }
+
+    private static void writeApiError(HttpServletResponse response, HttpStatus status, String message, String path, ObjectMapper objectMapper)
+            throws IOException {
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(objectMapper.writeValueAsString(ApiErrorResponse.body(status, message, path)));
     }
 
 }

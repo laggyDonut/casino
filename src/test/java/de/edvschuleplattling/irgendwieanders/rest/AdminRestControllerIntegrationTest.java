@@ -13,14 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -51,6 +54,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.VIEW_DETAILS);
 
         mockMvc.perform(get("/api/admin/users/{id}", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId()))
                 .andExpect(status().isOk());
 
@@ -65,6 +69,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.VIEW_DETAILS);
 
         mockMvc.perform(get("/api/admin/users/{id}", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId()))
                 .andExpect(status().isForbidden());
 
@@ -79,6 +84,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.LOCK_USER);
 
         mockMvc.perform(post("/api/admin/users/{id}/lock", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "Verdacht"))))
@@ -98,6 +104,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.LOCK_USER);
 
         mockMvc.perform(post("/api/admin/users/{id}/lock", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "no rights"))))
@@ -120,6 +127,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.UNLOCK_USER);
 
         mockMvc.perform(post("/api/admin/users/{id}/unlock", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "Entsperrt"))))
@@ -142,6 +150,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.UNLOCK_USER);
 
         mockMvc.perform(post("/api/admin/users/{id}/unlock", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "no rights"))))
@@ -161,6 +170,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.GRANT_ADMIN);
 
         mockMvc.perform(post("/api/admin/users/{id}/grant-admin", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "Team"))))
@@ -179,6 +189,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.GRANT_ADMIN);
 
         mockMvc.perform(post("/api/admin/users/{id}/grant-admin", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "no rights"))))
@@ -197,6 +208,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.REVOKE_ADMIN);
 
         mockMvc.perform(post("/api/admin/users/{id}/revoke-admin", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "Cleanup"))))
@@ -215,6 +227,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.REVOKE_ADMIN);
 
         mockMvc.perform(post("/api/admin/users/{id}/revoke-admin", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "no rights"))))
@@ -231,6 +244,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), admin.getId(), AuditActionType.REVOKE_ADMIN);
 
         mockMvc.perform(post("/api/admin/users/{id}/revoke-admin", admin.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("reason", "self"))))
@@ -242,6 +256,24 @@ class AdminRestControllerIntegrationTest {
     }
 
     @Test
+    void lockUser_selfLockoutBlocked_noStateChangeAndNoAudit() throws Exception {
+        Useraccount admin = createUser(Role.ADMIN);
+        long before = countAuditEntries(admin.getId(), admin.getId(), AuditActionType.LOCK_USER);
+
+        mockMvc.perform(post("/api/admin/users/{id}/lock", admin.getId())
+                        .with(auth(admin))
+                        .header("X-Actor-Id", admin.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("reason", "self-lock"))))
+                .andExpect(status().isConflict());
+
+        Useraccount unchanged = useraccountRepository.findById(admin.getId()).orElseThrow();
+        assertFalse(unchanged.isLocked());
+        assertNull(unchanged.getLockedAt());
+        assertEquals(before, countAuditEntries(admin.getId(), admin.getId(), AuditActionType.LOCK_USER));
+    }
+
+    @Test
     void changePassword_success_hashesPasswordAndWritesAudit() throws Exception {
         Useraccount admin = createUser(Role.ADMIN);
         Useraccount target = createUser(Role.GAMER);
@@ -249,6 +281,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.CHANGE_PASSWD);
 
         mockMvc.perform(post("/api/admin/users/{id}/password-reset", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
@@ -271,6 +304,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.CHANGE_PASSWD);
 
         mockMvc.perform(post("/api/admin/users/{id}/password-reset", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
@@ -290,6 +324,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(admin.getId(), target.getId(), AuditActionType.COIN_ADJUST);
 
         mockMvc.perform(post("/api/admin/users/{id}/coins/adjust", target.getId())
+                        .with(auth(admin))
                         .header("X-Actor-Id", admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
@@ -309,6 +344,7 @@ class AdminRestControllerIntegrationTest {
         long before = countAuditEntries(gamer.getId(), target.getId(), AuditActionType.COIN_ADJUST);
 
         mockMvc.perform(post("/api/admin/users/{id}/coins/adjust", target.getId())
+                        .with(auth(gamer))
                         .header("X-Actor-Id", gamer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
@@ -319,6 +355,23 @@ class AdminRestControllerIntegrationTest {
         Wallet wallet = walletRepository.findByUseraccountId(target.getId()).orElseThrow();
         assertEquals(1000L, wallet.getBalance());
         assertEquals(before, countAuditEntries(gamer.getId(), target.getId(), AuditActionType.COIN_ADJUST));
+    }
+
+    @Test
+    void lockUser_validationError_returnsUnifiedErrorStructure() throws Exception {
+        Useraccount admin = createUser(Role.ADMIN);
+        Useraccount target = createUser(Role.GAMER);
+
+        mockMvc.perform(post("/api/admin/users/{id}/lock", target.getId())
+                        .with(auth(admin))
+                        .header("X-Actor-Id", admin.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("reason", " "))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.path").value("/api/admin/users/" + target.getId() + "/lock"));
     }
 
     private Useraccount createUser(Role role) {
@@ -341,5 +394,10 @@ class AdminRestControllerIntegrationTest {
                 .filter(a -> a.getTargetId() != null && a.getTargetId().equals(targetId))
                 .filter(a -> a.getActionType() == actionType)
                 .count();
+    }
+
+    private RequestPostProcessor auth(Useraccount user) {
+        return SecurityMockMvcRequestPostProcessors.user(user.getEmail())
+                .authorities(() -> user.getRole().name());
     }
 }

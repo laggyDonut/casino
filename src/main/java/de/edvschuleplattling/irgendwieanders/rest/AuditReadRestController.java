@@ -16,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @Validated
 @RequestMapping("/api/admin/audit")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
 public class AuditReadRestController {
 
     private final AuditReadService auditReadService;
