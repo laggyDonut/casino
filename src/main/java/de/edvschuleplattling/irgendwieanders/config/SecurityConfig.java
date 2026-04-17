@@ -1,5 +1,6 @@
 package de.edvschuleplattling.irgendwieanders.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.edvschuleplattling.irgendwieanders.ApiErrorResponse;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -25,9 +26,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 
 @Configuration
@@ -125,15 +123,9 @@ public class SecurityConfig {
 
     private static void writeApiError(HttpServletResponse response, HttpStatus status, String message, String path, ObjectMapper objectMapper)
             throws IOException {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", OffsetDateTime.now().toString());
-        body.put("code", status.name());
-        body.put("message", message);
-        body.put("path", path);
-
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+        response.getWriter().write(objectMapper.writeValueAsString(ApiErrorResponse.body(status, message, path)));
     }
 
 }
